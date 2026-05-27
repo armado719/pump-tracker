@@ -1,0 +1,12 @@
+/node_modules
+/public/build
+/vendor
+.env
+.env.backup
+.env.production
+storage/logs/*.log
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
+bootstrap/cache/*.php

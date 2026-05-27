@@ -1,0 +1,51 @@
+<?php
+
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RigController;
+use App\Http\Controllers\PumpController;
+use App\Http\Controllers\DailyLogController;
+use App\Http\Controllers\AlertController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PersonnelController;
+use Illuminate\Support\Facades\Route;
+
+// Redirigir raíz al dashboard
+Route::get('/', fn() => redirect()->route('dashboard'));
+
+// ─── Rutas protegidas ────────────────────────────────────────────────────────
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Rigs
+    Route::resource('rigs', RigController::class);
+
+    // Bombas
+    Route::resource('pumps', PumpController::class);
+
+    // Personal de bomba
+    Route::get('/pumps/{pump}/personnel', [PersonnelController::class, 'create'])->name('pumps.personnel.create');
+    Route::post('/pumps/{pump}/personnel', [PersonnelController::class, 'store'])->name('pumps.personnel.store');
+
+    // Registro diario
+    Route::get('/pumps/{pump}/logs',        [DailyLogController::class, 'index'])->name('pumps.logs.index');
+    Route::get('/pumps/{pump}/logs/create', [DailyLogController::class, 'create'])->name('pumps.logs.create');
+    Route::post('/pumps/{pump}/logs',       [DailyLogController::class, 'store'])->name('pumps.logs.store');
+    Route::get('/pumps/{pump}/logs/{log}',  [DailyLogController::class, 'show'])->name('pumps.logs.show');
+
+    // Alertas
+    Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
+
+    // Reportes PDF
+    Route::get('/reports',          [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate',[ReportController::class, 'generate'])->name('reports.generate');
+
+    // Perfil
+    Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
