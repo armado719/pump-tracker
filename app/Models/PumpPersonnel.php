@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PumpPersonnel extends Model {
+    protected $table = 'pump_personnel';
+
     protected $fillable = [
         'pump_id','period_start','rig_manager',
         'supervisor_day','supervisor_night',
