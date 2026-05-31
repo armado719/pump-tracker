@@ -8,6 +8,10 @@
 
     {{-- Acción principal --}}
     <div class="flex justify-end gap-2">
+        <a href="{{ route('pumps.replacements', $pump) }}"
+           class="text-sm border border-orange-300 hover:bg-orange-50 px-4 py-2 rounded-lg text-orange-600 transition">
+            🔧 Historial Reemplazos
+        </a>
         <a href="{{ route('pumps.personnel.create', $pump) }}"
            class="text-sm border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg text-gray-600 transition">
             👥 Personal

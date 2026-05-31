@@ -6,6 +6,7 @@ use App\Models\Pump;
 use App\Models\Rig;
 use App\Models\DailyLog;
 use App\Models\AssemblyComponent;
+use App\Models\MaintenanceEvent;
 use App\Services\ThresholdService;
 use Illuminate\Http\Request;
 
@@ -129,6 +130,18 @@ class PumpController extends Controller
         ]);
         $pump->update($data);
         return redirect()->route('pumps.show', $pump)->with('success', 'Bomba actualizada.');
+    }
+
+    public function replacements(Pump $pump)
+    {
+        $pump->load('rig');
+
+        $events = MaintenanceEvent::whereHas('component.assembly', fn($q) => $q->where('pump_id', $pump->id))
+            ->with(['component.assembly', 'dailyLog'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('pumps.replacements', compact('pump', 'events'));
     }
 
     public function destroy(Pump $pump)

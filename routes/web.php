@@ -46,6 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pumps/{pump}/logs/{log}/edit',  [DailyLogController::class, 'edit'])->name('pumps.logs.edit');
     Route::put('/pumps/{pump}/logs/{log}',       [DailyLogController::class, 'update'])->name('pumps.logs.update');
 
+    // Historial de reemplazos por bomba
+    Route::get('/pumps/{pump}/replacements', [PumpController::class, 'replacements'])->name('pumps.replacements');
+
     // Reemplazo de componentes
     Route::get('/pumps/{pump}/components/{component}/replace',  [ComponentController::class, 'replaceForm'])->name('components.replace.form');
     Route::post('/pumps/{pump}/components/{component}/replace', [ComponentController::class, 'replace'])->name('components.replace');
