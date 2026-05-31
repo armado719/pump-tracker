@@ -1,10 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Registro Diario — ' . $pump->rig->name . ' Bomba #' . $pump->number)
-@section('header', 'Registro Diario — ' . $pump->rig->name . ' Bomba #' . $pump->number)
-@section('breadcrumb', $pump->rig->name . ' / Bomba #' . $pump->number . ' / Registro Día ' . $dayNumber)
 
 @section('content')
-<div class="pt-4 space-y-5" x-data="dailyLog()">
+<div class="pt-4 space-y-5" x-data="{ activeTab: 'left', hoursWorked: 0 }">
 
     {{-- ENCABEZADO (solo lectura) --}}
     <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
@@ -50,7 +48,7 @@
         @csrf
 
         {{-- CAMPOS PRINCIPALES DEL DÍA --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">
             <h3 class="font-semibold text-gray-800 mb-4 text-base">📅 Datos del Día</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
@@ -67,14 +65,13 @@
                     <label class="block text-xs font-medium text-gray-600 mb-1 uppercase">Horas Trabajo Hoy *</label>
                     <input type="number" step="0.01" min="0" max="24" name="hours_worked"
                            x-model.number="hoursWorked"
-                           @input="updateAll()"
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono text-center font-bold focus:ring-2 focus:ring-blue-500"
                            placeholder="0.00" required>
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1 uppercase">Horas Acumuladas</label>
                     <input type="number" step="0.01" name="accumulated_hours"
-                           x-bind:value="({{ $previousAccum }} + hoursWorked).toFixed(2)"
+                           :value="({{ $previousAccum }} + hoursWorked).toFixed(2)"
                            class="w-full border border-gray-200 bg-blue-50 rounded-lg px-3 py-2 text-sm font-mono font-bold text-center text-blue-700" readonly>
                 </div>
                 <div>
@@ -95,10 +92,10 @@
         </div>
 
         {{-- TABLA DE CONJUNTOS (tabs: Izquierdo / Medio / Derecho) --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-5">
             <div class="border-b border-gray-200">
                 <div class="flex">
-                    @foreach($pump->assemblies as $idx => $assembly)
+                    @foreach($pump->assemblies as $assembly)
                     <button type="button"
                             @click="activeTab = '{{ $assembly->position }}'"
                             :class="activeTab === '{{ $assembly->position }}'
@@ -132,35 +129,42 @@
                             $badge  = \App\Services\ThresholdService::getStatusBadgeClass($status);
                             $label  = \App\Services\ThresholdService::getStatusLabel($status);
                         @endphp
-                        <tr x-data="{ replaced: false, newHours: {{ $prevHours }} }"
-                            :class="replaced ? 'bg-orange-50' : '{{ $status !== 'ok' ? ($status === 'critical' ? 'bg-red-50' : 'bg-amber-50') : '' }}'">
+                        <tr x-data="{ replaced: false }"
+                            :class="replaced ? 'bg-orange-50' : '{{ $status === 'critical' ? 'bg-red-50' : ($status === 'warning' ? 'bg-amber-50' : '') }}'">
                             <td class="px-4 py-2 text-gray-500 text-xs">{{ $comp->section_label }}</td>
                             <td class="px-4 py-2 font-medium text-sm">{{ $comp->type_label }}</td>
                             <td class="px-4 py-2">
                                 <span x-show="!replaced" class="font-mono text-xs text-gray-500">{{ $comp->serial ?? '—' }}</span>
-                                <input x-show="replaced" type="text"
+                                {{-- Inputs solo se envían cuando replaced=true gracias a :disabled --}}
+                                <input x-show="replaced"
+                                       :disabled="!replaced"
+                                       type="text"
                                        name="replacements[{{ $comp->id }}][new_serial]"
                                        class="w-28 border border-orange-300 rounded px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-orange-400"
                                        placeholder="Nuevo serial">
-                                <input x-show="replaced" type="hidden"
+                                <input :disabled="!replaced"
+                                       type="hidden"
                                        name="replacements[{{ $comp->id }}][component_id]"
                                        value="{{ $comp->id }}">
-                                <input x-show="replaced" type="hidden"
+                                <input :disabled="!replaced"
+                                       type="hidden"
                                        name="replacements[{{ $comp->id }}][hours_before]"
                                        value="{{ $prevHours }}">
+                                <input :disabled="!replaced"
+                                       type="hidden"
+                                       name="replacements[{{ $comp->id }}][notes]"
+                                       :value="'Cambio registrado en día {{ $dayNumber }}'">
                             </td>
                             <td class="px-4 py-2 text-right">
-                                {{-- Horas acumuladas (se actualizan con Alpine cuando cambia hoursWorked) --}}
                                 <span x-show="!replaced"
                                       x-text="({{ $prevHours }} + hoursWorked).toFixed(2)"
                                       class="font-mono font-bold text-sm"></span>
                                 <span x-show="replaced"
                                       x-text="hoursWorked.toFixed(2)"
                                       class="font-mono font-bold text-sm text-orange-600"></span>
-                                {{-- Hidden input para guardar el valor --}}
                                 <input type="hidden"
                                        name="component_hours[{{ $comp->id }}]"
-                                       x-bind:value="replaced ? hoursWorked.toFixed(2) : ({{ $prevHours }} + hoursWorked).toFixed(2)">
+                                       :value="replaced ? hoursWorked.toFixed(2) : ({{ $prevHours }} + hoursWorked).toFixed(2)">
                             </td>
                             <td class="px-4 py-2 text-center">
                                 <span class="px-2 py-0.5 rounded-full text-xs font-medium border {{ $badge }}">{{ $label }}</span>
@@ -175,14 +179,14 @@
                     </tbody>
                 </table>
                 <p class="text-xs text-gray-400 px-4 py-2 border-t">
-                    ☑ Marca "Cambio" si reemplazaste el componente — las horas se resetean al valor de hoy.
+                    ☑ Marca "Cambio" si reemplazaste el componente hoy — las horas se resetean al valor del día.
                 </p>
             </div>
             @endforeach
         </div>
 
         {{-- COMENTARIOS --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">
             <label class="block text-sm font-medium text-gray-700 mb-2">Comentarios</label>
             <textarea name="comments" rows="2"
                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 resize-none"
@@ -201,18 +205,3 @@
     </form>
 </div>
 @endsection
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<script>
-function dailyLog() {
-    return {
-        activeTab: 'left',
-        hoursWorked: 0,
-        updateAll() {
-            // Alpine reactividad actualiza automáticamente los x-text/:value
-        }
-    }
-}
-</script>
-@endpush
