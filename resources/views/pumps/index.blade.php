@@ -30,6 +30,7 @@
                     <td class="px-4 py-3 text-right font-mono">{{ number_format($pump->base_accumulated_hours, 2) }}h</td>
                     <td class="px-4 py-3 text-center space-x-2">
                         <a href="{{ route('pumps.show', $pump) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
+                        <a href="{{ route('pumps.edit', $pump) }}" class="text-yellow-600 hover:underline text-xs">Editar</a>
                         <a href="{{ route('pumps.logs.create', $pump) }}" class="text-green-600 hover:underline text-xs">📝 Reg.</a>
                     </td>
                 </tr>
