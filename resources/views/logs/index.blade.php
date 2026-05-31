@@ -19,7 +19,7 @@
                     <th class="px-4 py-3 text-right">Acumuladas</th>
                     <th class="px-4 py-3 text-center">Dampener</th>
                     <th class="px-4 py-3 text-left">Comentarios</th>
-                    <th class="px-4 py-3 text-center">Ver</th>
+                    <th class="px-4 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -34,8 +34,9 @@
                     <td class="px-4 py-2 text-right font-mono">{{ number_format($log->accumulated_hours, 2) }}h</td>
                     <td class="px-4 py-2 text-center text-gray-500 font-mono text-xs">{{ $log->dampener_pressure ? $log->dampener_pressure.' PSI' : '—' }}</td>
                     <td class="px-4 py-2 text-gray-600 text-xs max-w-xs truncate">{{ $log->comments ?? '' }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <a href="{{ route('pumps.logs.show', [$pump, $log]) }}" class="text-blue-600 hover:underline text-xs">→</a>
+                    <td class="px-4 py-2 text-center flex items-center justify-center gap-3">
+                        <a href="{{ route('pumps.logs.show', [$pump, $log]) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
+                        <a href="{{ route('pumps.logs.edit', [$pump, $log]) }}" class="text-yellow-600 hover:underline text-xs">✏️ Editar</a>
                     </td>
                 </tr>
                 @endforeach

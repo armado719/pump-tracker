@@ -138,6 +138,71 @@ class DailyLogController extends Controller
     }
 
     /**
+     * Formulario de edición de un registro diario
+     */
+    public function edit(Pump $pump, DailyLog $log)
+    {
+        $pump->load('rig');
+        $wells = $pump->rig->wells;
+        $currentPersonnel = $pump->currentPersonnel();
+
+        // Acumulado del log anterior (base para recalcular)
+        $prevLog = $pump->dailyLogs()
+            ->where('id', '!=', $log->id)
+            ->where('log_date', '<=', $log->log_date)
+            ->orderByDesc('log_date')
+            ->first();
+        $previousAccum = $prevLog?->accumulated_hours ?? $pump->base_accumulated_hours;
+
+        return view('logs.edit', compact('pump', 'log', 'wells', 'previousAccum', 'currentPersonnel'));
+    }
+
+    /**
+     * Actualizar un registro diario (corrige horas, comentarios, etc.)
+     */
+    public function update(Request $request, Pump $pump, DailyLog $log)
+    {
+        $data = $request->validate([
+            'well_id'           => 'nullable|exists:wells,id',
+            'log_date'          => 'required|date',
+            'hours_worked'      => 'required|numeric|min:0|max:24',
+            'dampener_pressure' => 'nullable|integer|min:0',
+            'comments'          => 'nullable|string|max:500',
+        ]);
+
+        $diff = $data['hours_worked'] - $log->hours_worked;
+
+        $prevLog = $pump->dailyLogs()
+            ->where('id', '!=', $log->id)
+            ->where('log_date', '<=', $log->log_date)
+            ->orderByDesc('log_date')
+            ->first();
+        $previousAccum = $prevLog?->accumulated_hours ?? $pump->base_accumulated_hours;
+        $newAccum = $previousAccum + $data['hours_worked'];
+
+        DB::transaction(function() use ($data, $log, $diff, $newAccum) {
+            $log->update([
+                'well_id'           => $data['well_id'] ?? null,
+                'log_date'          => $data['log_date'],
+                'hours_worked'      => $data['hours_worked'],
+                'accumulated_hours' => $newAccum,
+                'dampener_pressure' => $data['dampener_pressure'] ?? null,
+                'comments'          => $data['comments'] ?? null,
+            ]);
+
+            // Ajustar horas de cada componente con la diferencia
+            if ($diff != 0) {
+                foreach ($log->componentHours as $ch) {
+                    $ch->update(['hours_accumulated' => max(0, $ch->hours_accumulated + $diff)]);
+                }
+            }
+        });
+
+        return redirect()->route('pumps.logs.show', [$pump, $log])
+            ->with('success', "Registro del día {$log->day_number} actualizado correctamente.");
+    }
+
+    /**
      * Ver todos los registros de una bomba
      */
     public function index(Pump $pump)

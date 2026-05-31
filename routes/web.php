@@ -39,10 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/pumps/{pump}/personnel', [PersonnelController::class, 'store'])->name('pumps.personnel.store');
 
     // Registro diario
-    Route::get('/pumps/{pump}/logs',        [DailyLogController::class, 'index'])->name('pumps.logs.index');
-    Route::get('/pumps/{pump}/logs/create', [DailyLogController::class, 'create'])->name('pumps.logs.create');
-    Route::post('/pumps/{pump}/logs',       [DailyLogController::class, 'store'])->name('pumps.logs.store');
-    Route::get('/pumps/{pump}/logs/{log}',  [DailyLogController::class, 'show'])->name('pumps.logs.show');
+    Route::get('/pumps/{pump}/logs',             [DailyLogController::class, 'index'])->name('pumps.logs.index');
+    Route::get('/pumps/{pump}/logs/create',      [DailyLogController::class, 'create'])->name('pumps.logs.create');
+    Route::post('/pumps/{pump}/logs',            [DailyLogController::class, 'store'])->name('pumps.logs.store');
+    Route::get('/pumps/{pump}/logs/{log}',       [DailyLogController::class, 'show'])->name('pumps.logs.show');
+    Route::get('/pumps/{pump}/logs/{log}/edit',  [DailyLogController::class, 'edit'])->name('pumps.logs.edit');
+    Route::put('/pumps/{pump}/logs/{log}',       [DailyLogController::class, 'update'])->name('pumps.logs.update');
 
     // Reemplazo de componentes
     Route::get('/pumps/{pump}/components/{component}/replace',  [ComponentController::class, 'replaceForm'])->name('components.replace.form');
