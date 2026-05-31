@@ -46,6 +46,16 @@ class DailyLogController extends Controller
             }
         }
 
+        // Si hubo reemplazos standalone (sin log diario) desde el último log, reiniciar esas horas a 0
+        $replacedIds = \App\Models\MaintenanceEvent::whereNull('daily_log_id')
+            ->whereIn('component_id', array_keys($previousComponentHours))
+            ->when($lastLog, fn($q) => $q->where('created_at', '>', $lastLog->created_at))
+            ->pluck('component_id')->unique()->toArray();
+
+        foreach ($replacedIds as $cid) {
+            $previousComponentHours[$cid] = 0;
+        }
+
         // Wells del rig para selector
         $wells = $pump->rig->wells;
         $currentPersonnel = $pump->currentPersonnel();

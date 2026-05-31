@@ -62,6 +62,7 @@
                         <th class="px-4 py-2 text-right">Horas Acum.</th>
                         <th class="px-4 py-2 text-center">Estado</th>
                         <th class="px-4 py-2 text-right">Umbral ⚠ / 🔴</th>
+                        <th class="px-4 py-2 text-center">Acción</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -83,6 +84,13 @@
                         </td>
                         <td class="px-4 py-2 text-right text-xs text-gray-400">
                             {{ $thresh['warning'] }}h / {{ $thresh['critical'] }}h
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            <a href="{{ route('components.replace.form', [$pump, $comp]) }}"
+                               class="text-xs text-orange-600 hover:text-orange-800 hover:underline font-medium"
+                               title="Registrar reemplazo de este componente">
+                                🔧 Cambiar
+                            </a>
                         </td>
                     </tr>
                     @endforeach

@@ -8,6 +8,7 @@ use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PersonnelController;
+use App\Http\Controllers\ComponentController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz al dashboard
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pumps/{pump}/logs/create', [DailyLogController::class, 'create'])->name('pumps.logs.create');
     Route::post('/pumps/{pump}/logs',       [DailyLogController::class, 'store'])->name('pumps.logs.store');
     Route::get('/pumps/{pump}/logs/{log}',  [DailyLogController::class, 'show'])->name('pumps.logs.show');
+
+    // Reemplazo de componentes
+    Route::get('/pumps/{pump}/components/{component}/replace',  [ComponentController::class, 'replaceForm'])->name('components.replace.form');
+    Route::post('/pumps/{pump}/components/{component}/replace', [ComponentController::class, 'replace'])->name('components.replace');
 
     // Alertas
     Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
