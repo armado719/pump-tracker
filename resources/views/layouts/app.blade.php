@@ -188,7 +188,8 @@ async function syncPendingLogs() {
 
 window.addEventListener('online',  updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
-updateOnlineStatus();
+// Page loaded from server = we are online; just check for pending logs
+checkPendingLogs();
 </script>
 </body>
 </html>
