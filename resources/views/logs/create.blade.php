@@ -205,3 +205,29 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('logForm').addEventListener('submit', function(e) {
+    if (navigator.onLine) return; // online: enviar normalmente
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+
+    const pending = JSON.parse(localStorage.getItem('pending_logs') || '[]');
+    pending.push({
+        url:       '{{ route('pumps.logs.store', $pump) }}',
+        pump_name: '{{ $pump->rig->name }} — Bomba #{{ $pump->number }}',
+        day:       {{ $dayNumber }},
+        data:      data,
+        saved_at:  new Date().toLocaleString('es-CO'),
+    });
+    localStorage.setItem('pending_logs', JSON.stringify(pending));
+
+    alert('📵 Sin conexión.\nEl registro del Día {{ $dayNumber }} fue guardado localmente.\nSe sincronizará automáticamente cuando haya señal.');
+    window.location.href = '{{ route('pumps.show', $pump) }}';
+});
+</script>
+@endpush

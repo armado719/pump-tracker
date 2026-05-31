@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 // Redirigir raíz al dashboard
 Route::get('/', fn() => redirect()->route('dashboard'));
 
+// Página offline (servida por service worker cuando no hay conexión)
+Route::get('/offline', fn() => response()->file(public_path('offline.html')));
+
 // ─── Rutas protegidas ────────────────────────────────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {
 

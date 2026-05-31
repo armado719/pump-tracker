@@ -123,6 +123,17 @@
             </div>
         @endif
 
+        {{-- Banner offline / sync pendiente --}}
+        <div id="offlineBanner" class="hidden mx-6 mt-3 px-4 py-2 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg text-sm flex items-center justify-between">
+            <span>📡 Sin conexión — trabajando en modo offline</span>
+        </div>
+        <div id="syncBanner" class="hidden mx-6 mt-3 px-4 py-2 bg-blue-100 border border-blue-300 text-blue-800 rounded-lg text-sm flex items-center justify-between">
+            <span id="syncMsg"></span>
+            <button onclick="syncPendingLogs()" class="ml-4 bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-medium hover:bg-blue-700">
+                Sincronizar ahora
+            </button>
+        </div>
+
         {{-- Page content --}}
         <main class="flex-1 overflow-y-auto p-6">
             @yield('content')
@@ -131,5 +142,53 @@
 </div>
 
 @stack('scripts')
+<script>
+// ── Offline / Sync ───────────────────────────────────────────────────────
+function updateOnlineStatus() {
+    document.getElementById('offlineBanner').classList.toggle('hidden', navigator.onLine);
+    if (navigator.onLine) checkPendingLogs();
+}
+
+function checkPendingLogs() {
+    const pending = JSON.parse(localStorage.getItem('pending_logs') || '[]');
+    const banner  = document.getElementById('syncBanner');
+    const msg     = document.getElementById('syncMsg');
+    if (pending.length > 0) {
+        msg.textContent = `Hay ${pending.length} registro(s) pendiente(s) de sincronizar`;
+        banner.classList.remove('hidden');
+    } else {
+        banner.classList.add('hidden');
+    }
+}
+
+async function syncPendingLogs() {
+    const pending = JSON.parse(localStorage.getItem('pending_logs') || '[]');
+    if (!pending.length) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    let synced = 0;
+
+    for (const entry of pending) {
+        try {
+            const body = new URLSearchParams(entry.data);
+            body.set('_token', csrfToken);
+            const res = await fetch(entry.url, { method: 'POST', body, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (res.ok || res.redirected) synced++;
+        } catch (e) { break; }
+    }
+
+    if (synced > 0) {
+        localStorage.removeItem('pending_logs');
+        alert(`✅ ${synced} registro(s) sincronizados correctamente.`);
+        window.location.reload();
+    } else {
+        alert('No se pudieron sincronizar los registros. Intenta de nuevo.');
+    }
+}
+
+window.addEventListener('online',  updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+</script>
 </body>
 </html>
