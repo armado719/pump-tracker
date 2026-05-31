@@ -55,21 +55,23 @@
                     <p class="text-xs text-gray-400 mt-1">Horas registradas antes de iniciar este sistema</p>
                 </div>
             </div>
-            <div class="flex justify-between items-center pt-2">
-                <form method="POST" action="{{ route('pumps.destroy', $pump) }}"
-                      onsubmit="return confirm('¿Eliminar esta bomba y todos sus datos?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">Eliminar bomba</button>
-                </form>
-                <div class="flex gap-3">
-                    <a href="{{ route('pumps.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">Cancelar</a>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
-                        Guardar cambios
-                    </button>
-                </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <a href="{{ route('pumps.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">Cancelar</a>
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
+                    Guardar cambios
+                </button>
             </div>
         </div>
     </form>
+
+    {{-- Formulario de eliminar separado (no puede anidarse dentro del form de editar) --}}
+    <div class="mt-4 text-right">
+        <form method="POST" action="{{ route('pumps.destroy', $pump) }}"
+              onsubmit="return confirm('¿Eliminar esta bomba y todos sus datos?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="text-red-500 hover:text-red-700 text-sm underline">Eliminar bomba</button>
+        </form>
+    </div>
 </div>
 @endsection
