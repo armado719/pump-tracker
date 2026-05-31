@@ -92,6 +92,21 @@
                 </svg>
                 Reportes
             </a>
+
+            @if(auth()->user()->isAdmin())
+            <a href="{{ route('users.index') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('users.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#152535'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
+               {{ request()->routeIs('users.*') ? 'data-active=1' : '' }}>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                Usuarios
+            </a>
+            @endif
         </nav>
 
         <div class="px-4 py-4" style="border-top:1px solid #1a3528;">

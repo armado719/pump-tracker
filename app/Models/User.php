@@ -32,4 +32,6 @@ class User extends Authenticatable
     }
 
     public function rig(): BelongsTo { return $this->belongsTo(Rig::class); }
+
+    public function isAdmin(): bool { return $this->role === 'admin'; }
 }
