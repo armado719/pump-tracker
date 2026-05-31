@@ -14,6 +14,44 @@
         </div>
     </div>
 
+    {{-- Pozos del rig --}}
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="font-semibold text-gray-800">Pozos ({{ $rig->wells->count() }})</h3>
+        </div>
+        <div class="px-5 py-4">
+            {{-- Lista de pozos existentes --}}
+            @if($rig->wells->count())
+            <div class="flex flex-wrap gap-2 mb-4">
+                @foreach($rig->wells as $well)
+                <div class="flex items-center gap-1 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5 text-sm">
+                    <span class="font-medium text-blue-800">{{ $well->name }}</span>
+                    <form method="POST" action="{{ route('rigs.wells.destroy', [$rig, $well]) }}"
+                          onsubmit="return confirm('¿Eliminar pozo {{ $well->name }}?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="text-blue-400 hover:text-red-500 ml-2 text-xs leading-none" title="Eliminar">✕</button>
+                    </form>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-sm text-gray-400 mb-4">Sin pozos registrados.</p>
+            @endif
+
+            {{-- Formulario agregar pozo --}}
+            <form method="POST" action="{{ route('rigs.wells.store', $rig) }}" class="flex items-center gap-2">
+                @csrf
+                <input type="text" name="name" required maxlength="50"
+                       class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 w-48"
+                       placeholder="Ej: CSB1644">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium">
+                    + Agregar Pozo
+                </button>
+            </form>
+        </div>
+    </div>
+
     {{-- Bombas del rig --}}
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">

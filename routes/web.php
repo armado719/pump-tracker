@@ -9,6 +9,7 @@ use App\Http\Controllers\AlertController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\ComponentController;
+use App\Http\Controllers\WellController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz al dashboard
@@ -22,6 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rigs
     Route::resource('rigs', RigController::class);
+
+    // Pozos (dentro de un rig)
+    Route::post('/rigs/{rig}/wells', [WellController::class, 'store'])->name('rigs.wells.store');
+    Route::delete('/rigs/{rig}/wells/{well}', [WellController::class, 'destroy'])->name('rigs.wells.destroy');
 
     // Bombas
     Route::resource('pumps', PumpController::class);
