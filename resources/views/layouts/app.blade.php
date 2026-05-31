@@ -104,23 +104,63 @@
 
         {{-- Flash messages --}}
         @if(session('success'))
-            <div class="mx-6 mt-4 px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded-lg text-sm">
-                {{ session('success') }}
+        <div class="mx-6 mt-4 flex items-stretch rounded-xl overflow-hidden shadow-md text-sm auto-dismiss">
+            <div class="bg-green-500 flex items-center justify-center px-4 py-3">
+                <svg class="w-6 h-6 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
             </div>
+            <div class="bg-green-50 border border-green-200 flex-1 px-4 py-3">
+                <p class="font-bold text-green-800 mb-0.5">Éxito</p>
+                <p class="text-green-700">{{ session('success') }}</p>
+            </div>
+        </div>
         @endif
+
         @if(session('error'))
-            <div class="mx-6 mt-4 px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded-lg text-sm">
-                {{ session('error') }}
+        <div class="mx-6 mt-4 flex items-stretch rounded-xl overflow-hidden shadow-md text-sm auto-dismiss">
+            <div class="bg-red-500 flex items-center justify-center px-4 py-3">
+                <svg class="w-6 h-6 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
             </div>
+            <div class="bg-red-50 border border-red-200 flex-1 px-4 py-3">
+                <p class="font-bold text-red-800 mb-0.5">Error</p>
+                <p class="text-red-700">{{ session('error') }}</p>
+            </div>
+        </div>
         @endif
+
+        @if(session('warning'))
+        <div class="mx-6 mt-4 flex items-stretch rounded-xl overflow-hidden shadow-md text-sm auto-dismiss">
+            <div class="bg-orange-400 flex items-center justify-center px-4 py-3">
+                <svg class="w-6 h-6 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+            </div>
+            <div class="bg-orange-50 border border-orange-200 flex-1 px-4 py-3">
+                <p class="font-bold text-orange-800 mb-0.5">Atención</p>
+                <p class="text-orange-700">{{ session('warning') }}</p>
+            </div>
+        </div>
+        @endif
+
         @if($errors->any())
-            <div class="mx-6 mt-4 px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded-lg text-sm">
-                <ul class="list-disc list-inside space-y-1">
+        <div class="mx-6 mt-4 flex items-stretch rounded-xl overflow-hidden shadow-md text-sm auto-dismiss">
+            <div class="bg-red-500 flex items-center justify-center px-4 py-3">
+                <svg class="w-6 h-6 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+            </div>
+            <div class="bg-red-50 border border-red-200 flex-1 px-4 py-3">
+                <p class="font-bold text-red-800 mb-0.5">Error de validación</p>
+                <ul class="text-red-700 list-disc list-inside space-y-0.5">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
+        </div>
         @endif
 
         {{-- Banner offline / sync pendiente --}}
@@ -190,6 +230,15 @@ window.addEventListener('online',  updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 // Page loaded from server = we are online; just check for pending logs
 checkPendingLogs();
+
+// Auto-dismiss flash notifications after 4 seconds
+document.querySelectorAll('.auto-dismiss').forEach(el => {
+    setTimeout(() => {
+        el.style.transition = 'opacity 0.5s ease';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+    }, 4000);
+});
 </script>
 </body>
 </html>
