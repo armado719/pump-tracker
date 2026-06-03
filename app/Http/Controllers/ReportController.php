@@ -13,7 +13,7 @@ class ReportController extends Controller
     public function index()
     {
         $user  = auth()->user();
-        $pumps = $user->role === 'admin'
+        $pumps = ($user->role === 'admin' || !$user->rig_id)
             ? Pump::with('rig')->get()
             : Pump::whereHas('rig', fn($q) => $q->where('id', $user->rig_id))->with('rig')->get();
 

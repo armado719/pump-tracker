@@ -12,7 +12,7 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $rigsQuery = $user->role === 'admin'
+        $rigsQuery = ($user->role === 'admin' || !$user->rig_id)
             ? Rig::query()
             : Rig::where('id', $user->rig_id);
 

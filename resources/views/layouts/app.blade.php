@@ -117,7 +117,10 @@
                 </div>
                 <div class="text-sm">
                     <div class="font-medium text-white">{{ auth()->user()->name ?? '' }}</div>
-                    <div class="text-xs" style="color:#6b9e82;">{{ auth()->user()->role ?? '' }}</div>
+                    <div class="text-xs" style="color:#6b9e82;">
+                        @php $roleLabel = ['admin'=>'Administrador','rig_manager'=>'Rig Manager','supervisor'=>'Supervisor']; @endphp
+                        {{ $roleLabel[auth()->user()->role] ?? auth()->user()->role }}
+                    </div>
                 </div>
             </div>
             <form method="POST" action="{{ route('logout') }}">
@@ -246,6 +249,7 @@ async function syncPendingLogs() {
     if (!pending.length) return;
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const failed = [];
     let synced = 0;
 
     for (const entry of pending) {
@@ -253,16 +257,28 @@ async function syncPendingLogs() {
             const body = new URLSearchParams(entry.data);
             body.set('_token', csrfToken);
             const res = await fetch(entry.url, { method: 'POST', body, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            if (res.ok || res.redirected) synced++;
-        } catch (e) { break; }
+            if (res.ok || res.redirected) {
+                synced++;
+            } else {
+                failed.push(entry);
+            }
+        } catch (e) {
+            failed.push(entry);
+        }
+    }
+
+    // Solo conservar los que fallaron
+    if (failed.length > 0) {
+        localStorage.setItem('pending_logs', JSON.stringify(failed));
+    } else {
+        localStorage.removeItem('pending_logs');
     }
 
     if (synced > 0) {
-        localStorage.removeItem('pending_logs');
-        alert(`✅ ${synced} registro(s) sincronizados correctamente.`);
+        alert(`✅ ${synced} registro(s) sincronizados.${failed.length ? ` ${failed.length} no pudieron enviarse.` : ''}`);
         window.location.reload();
     } else {
-        alert('No se pudieron sincronizar los registros. Intenta de nuevo.');
+        alert('No se pudieron sincronizar los registros. Verifica tu conexión.');
     }
 }
 
