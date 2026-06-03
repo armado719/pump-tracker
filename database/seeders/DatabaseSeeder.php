@@ -10,13 +10,38 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Usuario administrador
-        User::factory()->create([
-            'name'     => 'Admin',
-            'email'    => 'admin@pumptracker.com',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
+        // Admin GRS
+        User::updateOrCreate(
+            ['email' => 'admin@grs.com'],
+            [
+                'name'     => 'Administrador GRS',
+                'password' => Hash::make('admin123'),
+                'role'     => 'admin',
+                'active'   => true,
+            ]
+        );
+
+        // Rig Manager
+        User::updateOrCreate(
+            ['email' => 'manager@grs.com'],
+            [
+                'name'     => 'Rig Manager GRS',
+                'password' => Hash::make('grs2026'),
+                'role'     => 'rig_manager',
+                'active'   => true,
+            ]
+        );
+
+        // Supervisor
+        User::updateOrCreate(
+            ['email' => 'supervisor@grs.com'],
+            [
+                'name'     => 'Supervisor GRS',
+                'password' => Hash::make('grs2026'),
+                'role'     => 'supervisor',
+                'active'   => true,
+            ]
+        );
 
         // Datos reales del RIG158
         $this->call(RIG158Seeder::class);

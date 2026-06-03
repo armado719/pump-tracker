@@ -39,7 +39,6 @@
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1 uppercase">Rol *</label>
                 <select name="role" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
-                    <option value="encuellador" {{ old('role') === 'encuellador' ? 'selected' : '' }}>Encuellador</option>
                     <option value="supervisor"  {{ old('role') === 'supervisor'  ? 'selected' : '' }}>Supervisor</option>
                     <option value="rig_manager" {{ old('role') === 'rig_manager' ? 'selected' : '' }}>Rig Manager</option>
                     <option value="admin"       {{ old('role') === 'admin'       ? 'selected' : '' }}>Admin</option>
