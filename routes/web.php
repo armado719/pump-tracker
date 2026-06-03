@@ -20,7 +20,7 @@ Route::get('/', fn() => redirect()->route('dashboard'));
 Route::get('/offline', fn() => response()->file(public_path('offline.html')));
 
 // ─── Rutas protegidas ────────────────────────────────────────────────────────
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

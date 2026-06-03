@@ -32,12 +32,13 @@ class UserController extends Controller
         ]);
 
         User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'     => $data['role'],
-            'rig_id'   => $data['rig_id'] ?? null,
-            'active'   => true,
+            'name'              => $data['name'],
+            'email'             => $data['email'],
+            'password'          => Hash::make($data['password']),
+            'role'              => $data['role'],
+            'rig_id'            => $data['rig_id'] ?? null,
+            'active'            => true,
+            'email_verified_at' => now(),
         ]);
 
         return redirect()->route('users.index')->with('success', "Usuario {$data['name']} creado correctamente.");

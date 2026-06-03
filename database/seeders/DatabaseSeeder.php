@@ -10,14 +10,17 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $verified = now();
+
         // Admin GRS
         User::updateOrCreate(
             ['email' => 'admin@grs.com'],
             [
-                'name'     => 'Administrador GRS',
-                'password' => Hash::make('admin123'),
-                'role'     => 'admin',
-                'active'   => true,
+                'name'              => 'Administrador GRS',
+                'password'          => Hash::make('admin123'),
+                'role'              => 'admin',
+                'active'            => true,
+                'email_verified_at' => $verified,
             ]
         );
 
@@ -25,10 +28,11 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'manager@grs.com'],
             [
-                'name'     => 'Rig Manager GRS',
-                'password' => Hash::make('grs2026'),
-                'role'     => 'rig_manager',
-                'active'   => true,
+                'name'              => 'Rig Manager GRS',
+                'password'          => Hash::make('grs2026'),
+                'role'              => 'rig_manager',
+                'active'            => true,
+                'email_verified_at' => $verified,
             ]
         );
 
@@ -36,10 +40,11 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'supervisor@grs.com'],
             [
-                'name'     => 'Supervisor GRS',
-                'password' => Hash::make('grs2026'),
-                'role'     => 'supervisor',
-                'active'   => true,
+                'name'              => 'Supervisor GRS',
+                'password'          => Hash::make('grs2026'),
+                'role'              => 'supervisor',
+                'active'            => true,
+                'email_verified_at' => $verified,
             ]
         );
 
