@@ -93,6 +93,51 @@
                 Reportes
             </a>
 
+            {{-- ── CABLE TM ── --}}
+            <div class="px-3 pt-4 pb-1">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-px" style="background:#2d1f00;"></div>
+                    <span class="text-xs font-black tracking-widest" style="color:#7a6040;">CABLE TM</span>
+                    <div class="flex-1 h-px" style="background:#2d1f00;"></div>
+                </div>
+            </div>
+
+            <a href="{{ route('cable.dashboard') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('cable.*') ? 'background-color:#3d1f00;color:#E8A045;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#2a1500'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
+               {{ request()->routeIs('cable.*') ? 'data-active=1' : '' }}>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Estado Cable TM
+            </a>
+
+            <a href="{{ route('cable.operaciones.create') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('cable.operaciones.create') ? 'background-color:#3d1f00;color:#E8A045;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#2a1500'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Nueva Operación
+            </a>
+
+            <a href="{{ route('cable.historial') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('cable.historial') ? 'background-color:#3d1f00;color:#E8A045;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#2a1500'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Historial Cables
+            </a>
+
             @if(auth()->user()->isAdmin())
             <a href="{{ route('users.index') }}"
                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"

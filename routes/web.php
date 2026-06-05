@@ -11,6 +11,8 @@ use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\WellController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CableController;
+use App\Http\Controllers\OperacionTmController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz al dashboard
@@ -94,6 +96,20 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/users/{user}',            [UserController::class, 'update'])->name('users.update');
         Route::patch('/users/{user}/toggle',   [UserController::class, 'toggle'])->name('users.toggle');
         Route::delete('/users/{user}',         [UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    // ── Cable TM ─────────────────────────────────────────────────────────────
+    Route::prefix('cable')->name('cable.')->group(function () {
+        Route::get('/',                   [CableController::class, 'dashboard'])->name('dashboard');
+        Route::get('/historial',          [CableController::class, 'historial'])->name('historial');
+        Route::get('/configuracion',      [CableController::class, 'configuracion'])->name('configuracion');
+        Route::put('/configuracion',      [CableController::class, 'updateConfiguracion'])->name('configuracion.update');
+        Route::post('/registrar',         [CableController::class, 'registrarCable'])->name('registrar');
+        Route::patch('/{cable}/activar',  [CableController::class, 'activar'])->name('activar');
+
+        Route::get('/operaciones',        [OperacionTmController::class, 'index'])->name('operaciones.index');
+        Route::get('/operaciones/nueva',  [OperacionTmController::class, 'create'])->name('operaciones.create');
+        Route::post('/operaciones',       [OperacionTmController::class, 'store'])->name('operaciones.store');
     });
 
     // Perfil
