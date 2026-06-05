@@ -6,7 +6,7 @@
 <div class="space-y-6 pt-4">
 
     {{-- Cards resumen --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rigs Activos</p>
             <p class="text-3xl font-bold text-gray-900 mt-1">{{ $totalRigs }}</p>
@@ -22,6 +22,12 @@
         <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Horas Prom. (7d)</p>
             <p class="text-3xl font-bold text-gray-900 mt-1">{{ $avgHours }}h</p>
+        </div>
+        <div class="rounded-xl p-5 shadow-sm" style="background:#001a1f;border:1px solid #003344;">
+            <p class="text-xs uppercase tracking-wide font-medium" style="color:#4a8a9e;">Cables TM — Alertas</p>
+            <p class="text-3xl font-bold mt-1" style="color:{{ $tmAlertCount > 0 ? '#EAB308' : '#06B6D4' }};">
+                {{ $tmAlertCount }}
+            </p>
         </div>
     </div>
 
@@ -89,6 +95,85 @@
                 <p class="text-gray-400 text-sm text-center py-4">✅ Sin alertas activas</p>
                 @endforelse
             </div>
+        </div>
+    </div>
+
+    {{-- Estado Cable TM por Rig --}}
+    <div class="rounded-xl overflow-hidden shadow-sm" style="background:#001a1f;border:1px solid #003344;">
+        <div class="px-5 py-3 flex items-center justify-between" style="border-bottom:1px solid #003344;">
+            <h3 class="font-semibold text-sm" style="color:#4a8a9e;">
+                <svg class="w-4 h-4 inline-block mr-1 -mt-0.5" fill="none" stroke="#06B6D4" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Estado Cable TM — por Equipo
+            </h3>
+            <a href="{{ route('cable.dashboard') }}" class="text-xs hover:underline" style="color:#06B6D4;">
+                Ver detalle →
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead style="background:#00111a;">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs uppercase" style="color:#4a8a9e;">Equipo</th>
+                        <th class="px-4 py-2 text-left text-xs uppercase" style="color:#4a8a9e;">Cable</th>
+                        <th class="px-4 py-2 text-xs uppercase" style="color:#4a8a9e;">Progreso TM</th>
+                        <th class="px-4 py-2 text-right text-xs uppercase" style="color:#4a8a9e;">Acumulado</th>
+                        <th class="px-4 py-2 text-right text-xs uppercase" style="color:#4a8a9e;">Máximo</th>
+                        <th class="px-4 py-2 text-center text-xs uppercase" style="color:#4a8a9e;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($cableTmStatus as $row)
+                    @php
+                        $color = match($row['status']) {
+                            'critical'  => '#FF4D2E',
+                            'warning'   => '#EAB308',
+                            'sin-cable' => '#4a8a9e',
+                            default     => '#06B6D4',
+                        };
+                        $barW = min(100, $row['tmPct']);
+                    @endphp
+                    <tr style="border-top:1px solid #003344;">
+                        <td class="px-4 py-2 font-medium text-xs" style="color:#F0EDE8;">{{ $row['rig']->name }}</td>
+                        <td class="px-4 py-2 font-mono text-xs" style="color:#06B6D4;">
+                            {{ $row['cable']?->serial ?? '—' }}
+                        </td>
+                        <td class="px-4 py-2" style="min-width:140px;">
+                            @if($row['cable'])
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 rounded-full h-2" style="background:#003344;">
+                                    <div class="h-2 rounded-full" style="width:{{ $barW }}%;background:{{ $color }};"></div>
+                                </div>
+                                <span class="text-xs font-bold font-mono w-10 text-right" style="color:{{ $color }};">
+                                    {{ $row['tmPct'] }}%
+                                </span>
+                            </div>
+                            @else
+                            <span class="text-xs" style="color:#4a8a9e;">Sin cable activo</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2 text-right font-mono text-xs" style="color:#F0EDE8;">
+                            {{ $row['cable'] ? number_format($row['tmAcum'], 2) . ' TM' : '—' }}
+                        </td>
+                        <td class="px-4 py-2 text-right font-mono text-xs" style="color:#4a8a9e;">
+                            {{ $row['cable'] ? number_format($row['tmMax'], 0) . ' TM' : '—' }}
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            @if($row['status'] === 'critical')
+                                <span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:#1a0000;color:#FF4D2E;border:1px solid #7f1d1d;">CRÍTICO</span>
+                            @elseif($row['status'] === 'warning')
+                                <span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:#1a1000;color:#EAB308;border:1px solid #713f12;">ALERTA</span>
+                            @elseif($row['status'] === 'ok')
+                                <span class="text-xs px-2 py-0.5 rounded-full" style="background:#001a1f;color:#06B6D4;border:1px solid #003344;">OK</span>
+                            @else
+                                <span class="text-xs px-2 py-0.5 rounded-full" style="color:#4a8a9e;">Sin cable</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 

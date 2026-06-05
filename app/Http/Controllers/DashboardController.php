@@ -19,6 +19,7 @@ class DashboardController extends Controller
         $rigs = $rigsQuery->with([
             'pumps.assemblies.components.componentHours',
             'pumps.dailyLogs' => fn($q) => $q->whereDate('log_date', today()),
+            'cables' => fn($q) => $q->where('activo', true),
         ])->get();
 
         $totalRigs  = $rigs->count();
@@ -64,6 +65,24 @@ class DashboardController extends Controller
             2
         );
 
+        // Estado Cable TM por rig
+        $cableTmStatus = $rigs->map(function($rig) {
+            $cable  = $rig->cables->first();
+            $tmMax  = $rig->tm_max_corte ?? 1200;
+            $alerta = $rig->tm_alerta_pct ?? 80;
+            $tmAcum = 0;
+            $tmPct  = 0;
+            if ($cable) {
+                $tmAcum = round($cable->tmAcumulado(), 2);
+                $tmPct  = $tmMax > 0 ? round($tmAcum / $tmMax * 100, 1) : 0;
+            }
+            $status = !$cable ? 'sin-cable'
+                : ($tmPct >= 95 ? 'critical' : ($tmPct >= $alerta ? 'warning' : 'ok'));
+            return compact('rig', 'cable', 'tmAcum', 'tmMax', 'tmPct', 'status');
+        });
+
+        $tmAlertCount = $cableTmStatus->whereIn('status', ['critical', 'warning'])->count();
+
         // Estado de rigs para la tabla
         $rigStatus = $rigs->map(function($rig) {
             $pIds = $rig->pumps->pluck('id');
@@ -101,7 +120,8 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'totalRigs', 'pumpsToday', 'criticalCount', 'avgHours',
-            'topAlerts', 'rigStatus', 'labels', 'chartDatasets'
+            'topAlerts', 'rigStatus', 'labels', 'chartDatasets',
+            'cableTmStatus', 'tmAlertCount'
         ));
     }
 }
