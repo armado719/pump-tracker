@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Audit;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AuditController extends Controller
@@ -31,6 +32,9 @@ class AuditController extends Controller
         $dbModules    = Audit::distinct()->orderBy('module')->pluck('module')->toArray();
         $modules      = collect(array_unique(array_merge($knownModules, $dbModules)))->sort()->values();
 
-        return view('audit.index', compact('audits', 'modules'));
+        // Lista de usuarios para el filtro (dropdown)
+        $users = User::orderBy('name')->get(['id', 'name', 'role']);
+
+        return view('audit.index', compact('audits', 'modules', 'users'));
     }
 }

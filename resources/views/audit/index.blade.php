@@ -24,9 +24,18 @@
 
         <div class="flex-1 min-w-36">
             <label class="block text-xs uppercase font-medium mb-1" style="color:#6b9e82;">Usuario</label>
-            <input type="text" name="user" value="{{ request('user') }}" placeholder="Nombre..."
-                   class="w-full rounded-lg px-3 py-2 text-sm"
-                   style="background:#0a1825;border:1px solid #1a3040;color:#F0EDE8;">
+            <select name="user" class="w-full rounded-lg px-3 py-2 text-sm"
+                    style="background:#0a1825;border:1px solid #1a3040;color:#F0EDE8;">
+                <option value="">Todos los usuarios</option>
+                @foreach($users as $u)
+                    <option value="{{ $u->name }}"
+                            {{ request('user') === $u->name ? 'selected' : '' }}>
+                        {{ $u->name }}
+                        @php $rl = ['admin'=>'Admin','rig_manager'=>'Rig Mgr','supervisor'=>'Sup.']; @endphp
+                        ({{ $rl[$u->role] ?? $u->role }})
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         <div>

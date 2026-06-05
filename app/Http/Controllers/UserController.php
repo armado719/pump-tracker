@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use App\Models\User;
 use App\Models\Rig;
 use App\Services\AuditService;
@@ -13,7 +14,16 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('rig')->orderBy('role')->orderBy('name')->get();
-        return view('users.index', compact('users'));
+
+        // Última actividad de cada usuario desde el log de auditoría
+        $lastActivity = Audit::selectRaw('user_id, MAX(created_at) as last_at, action, module, description')
+            ->whereNotNull('user_id')
+            ->whereIn('user_id', $users->pluck('id'))
+            ->groupBy('user_id')
+            ->get()
+            ->keyBy('user_id');
+
+        return view('users.index', compact('users', 'lastActivity'));
     }
 
     public function create()
