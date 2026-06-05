@@ -16,11 +16,11 @@ class UserController extends Controller
         $users = User::with('rig')->orderBy('role')->orderBy('name')->get();
 
         // Última actividad de cada usuario desde el log de auditoría
-        $lastActivity = Audit::selectRaw('user_id, MAX(created_at) as last_at, action, module, description')
-            ->whereNotNull('user_id')
+        $lastActivity = Audit::whereNotNull('user_id')
             ->whereIn('user_id', $users->pluck('id'))
-            ->groupBy('user_id')
-            ->get()
+            ->latest('created_at')
+            ->get(['user_id', 'created_at', 'action', 'module', 'description'])
+            ->unique('user_id')
             ->keyBy('user_id');
 
         return view('users.index', compact('users', 'lastActivity'));
