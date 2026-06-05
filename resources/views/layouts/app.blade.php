@@ -173,6 +173,41 @@
             </a>
 
             @if(auth()->user()->isAdmin())
+            {{-- Separador admin --}}
+            <div class="px-3 pt-4 pb-1">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-px" style="background:#1a2535;"></div>
+                    <span class="text-xs font-black tracking-widest" style="color:#5a7a8e;">ADMIN</span>
+                    <div class="flex-1 h-px" style="background:#1a2535;"></div>
+                </div>
+            </div>
+
+            <a href="{{ route('users.index') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('users.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#152535'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
+               {{ request()->routeIs('users.*') ? 'data-active=1' : '' }}>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                Usuarios
+            </a>
+
+            <a href="{{ route('wells.index') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('wells.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#152535'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
+               {{ request()->routeIs('wells.*') ? 'data-active=1' : '' }}>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                </svg>
+                Pozos
+            </a>
+
             <a href="{{ route('audit.index') }}"
                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
                style="{{ request()->routeIs('audit.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
@@ -185,17 +220,18 @@
                 </svg>
                 Auditoría
             </a>
-            <a href="{{ route('users.index') }}"
+
+            <a href="{{ route('admin.settings.mail') }}"
                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
-               style="{{ request()->routeIs('users.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
+               style="{{ request()->routeIs('admin.settings.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
                onmouseover="if(!this.dataset.active)this.style.backgroundColor='#152535'"
                onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
-               {{ request()->routeIs('users.*') ? 'data-active=1' : '' }}>
+               {{ request()->routeIs('admin.settings.*') ? 'data-active=1' : '' }}>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                Usuarios
+                Correo SMTP
             </a>
             @endif
         </nav>

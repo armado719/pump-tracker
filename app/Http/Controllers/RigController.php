@@ -80,9 +80,16 @@ class RigController extends Controller
     {
         $this->authorize('admin');
         $data = $request->validate([
-            'name'     => 'required|string|max:50',
-            'location' => 'nullable|string|max:100',
-            'manager'  => 'nullable|string|max:200',
+            'name'                   => 'required|string|max:50',
+            'location'               => 'nullable|string|max:100',
+            'manager'                => 'nullable|string|max:200',
+            'altura_torre_ft'        => 'nullable|numeric|min:0',
+            'diametro_tambor_in'     => 'nullable|numeric|min:0',
+            'lineas_activas'         => 'nullable|integer|min:1|max:20',
+            'tm_max_corte'           => 'nullable|numeric|min:1',
+            'tipo_cable'             => 'nullable|string|max:10',
+            'peso_bloque_default_lb' => 'nullable|numeric|min:0',
+            'tm_alerta_pct'          => 'nullable|numeric|min:1|max:100',
         ]);
         $rig->update($data);
         return redirect()->route('rigs.show', $rig)->with('success', 'Rig actualizado.');

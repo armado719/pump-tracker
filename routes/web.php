@@ -16,6 +16,7 @@ use App\Http\Controllers\OperacionTmController;
 use App\Http\Controllers\GerenciaController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\AdminSettingsController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz al dashboard
@@ -42,10 +43,17 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/rigs/{rig}',    [RigController::class, 'destroy'])->name('rigs.destroy');
     });
 
-    // Pozos — solo admin
+    // Pozos — gestión centralizada + inline en rig (admin)
     Route::middleware('admin')->group(function () {
-        Route::post('/rigs/{rig}/wells',              [WellController::class, 'store'])->name('rigs.wells.store');
-        Route::delete('/rigs/{rig}/wells/{well}',     [WellController::class, 'destroy'])->name('rigs.wells.destroy');
+        Route::get('/wells',             [WellController::class, 'index'])->name('wells.index');
+        Route::get('/wells/create',      [WellController::class, 'create'])->name('wells.create');
+        Route::post('/wells',            [WellController::class, 'storeAdmin'])->name('wells.store');
+        Route::get('/wells/{well}/edit', [WellController::class, 'edit'])->name('wells.edit');
+        Route::put('/wells/{well}',      [WellController::class, 'update'])->name('wells.update');
+        Route::delete('/wells/{well}',   [WellController::class, 'destroyAdmin'])->name('wells.destroy');
+        // Inline desde rig show
+        Route::post('/rigs/{rig}/wells',          [WellController::class, 'store'])->name('rigs.wells.store');
+        Route::delete('/rigs/{rig}/wells/{well}', [WellController::class, 'destroy'])->name('rigs.wells.destroy');
     });
 
     // Bombas — ver para todos; crear/editar/borrar solo admin
@@ -101,6 +109,13 @@ Route::middleware(['auth'])->group(function () {
     // Auditoría — solo admin
     Route::middleware('admin')->group(function () {
         Route::get('/audit', [AuditController::class, 'index'])->name('audit.index');
+    });
+
+    // Configuración del sistema — solo admin
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin/settings/mail',        [AdminSettingsController::class, 'mailForm'])->name('admin.settings.mail');
+        Route::put('/admin/settings/mail',        [AdminSettingsController::class, 'updateMail'])->name('admin.settings.mail.update');
+        Route::post('/admin/settings/mail/test',  [AdminSettingsController::class, 'testMail'])->name('admin.settings.mail.test');
     });
 
     // Gestión de usuarios — solo admin
