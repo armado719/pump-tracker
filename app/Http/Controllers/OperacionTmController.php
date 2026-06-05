@@ -18,7 +18,10 @@ class OperacionTmController extends Controller
         $cable = $rig?->cableActivo();
 
         if (!$cable) {
-            abort(404, 'No hay cable activo. Registra un cable primero.');
+            redirect()->route('cable.dashboard')
+                ->with('warning', 'Primero registra un cable activo antes de ingresar operaciones.')
+                ->send();
+            exit;
         }
         return $cable;
     }
