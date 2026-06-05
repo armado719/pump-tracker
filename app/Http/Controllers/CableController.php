@@ -11,24 +11,37 @@ class CableController extends Controller
 {
     private function rig(): Rig
     {
-        // En v1 usamos el primer rig disponible para el usuario
         $user = auth()->user();
+
         if ($user->rig_id) {
             return Rig::findOrFail($user->rig_id);
         }
-        return Rig::first() ?? abort(404, 'No hay rigs configurados.');
+
+        // Admin / sin rig fijo: usa la selección guardada en sesión
+        $rigId = session('cable_rig_id');
+        $rig   = $rigId ? Rig::find($rigId) : null;
+
+        return $rig ?? Rig::first() ?? abort(404, 'No hay rigs configurados.');
+    }
+
+    public function seleccionarRig(Request $request)
+    {
+        $request->validate(['rig_id' => 'required|exists:rigs,id']);
+        session(['cable_rig_id' => $request->rig_id]);
+        return redirect()->route('cable.dashboard');
     }
 
     public function dashboard()
     {
-        $rig    = $this->rig();
-        $cable  = $rig->cableActivo();
+        $user  = auth()->user();
+        $rig   = $this->rig();
+        $cable = $rig->cableActivo();
         $tmMax  = $rig->tm_max_corte ?? 1200;
         $alerta = $rig->tm_alerta_pct ?? 80;
 
-        $tmAcum = 0;
-        $tmPct  = 0;
-        $gauge  = TmCalculatorService::gaugeArc(0);
+        $tmAcum  = 0;
+        $tmPct   = 0;
+        $gauge   = TmCalculatorService::gaugeArc(0);
         $ultimas = collect();
 
         if ($cable) {
@@ -40,8 +53,11 @@ class CableController extends Controller
 
         $cables = $rig->cables()->withCount('operaciones')->orderByDesc('activo')->orderByDesc('fecha_instalacion')->get();
 
+        // Solo usuarios sin rig fijo (admin) ven el selector
+        $rigsDisponibles = !$user->rig_id ? Rig::orderBy('name')->get() : collect();
+
         return view('cable.dashboard', compact(
-            'rig','cable','tmAcum','tmMax','tmPct','gauge','alerta','ultimas','cables'
+            'rig','cable','tmAcum','tmMax','tmPct','gauge','alerta','ultimas','cables','rigsDisponibles'
         ));
     }
 

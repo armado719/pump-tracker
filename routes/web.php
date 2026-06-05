@@ -105,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
     // ── Cable TM ─────────────────────────────────────────────────────────────
     Route::prefix('cable')->name('cable.')->group(function () {
         Route::get('/',                   [CableController::class, 'dashboard'])->name('dashboard');
+        Route::post('/rig',               [CableController::class, 'seleccionarRig'])->name('seleccionar-rig');
         Route::get('/historial',          [CableController::class, 'historial'])->name('historial');
         Route::get('/configuracion',      [CableController::class, 'configuracion'])->name('configuracion');
         Route::put('/configuracion',      [CableController::class, 'updateConfiguracion'])->name('configuracion.update');
