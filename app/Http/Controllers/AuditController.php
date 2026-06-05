@@ -24,8 +24,12 @@ class AuditController extends Controller
             $query->whereDate('created_at', '<=', $request->hasta);
         }
 
-        $audits  = $query->paginate(50)->withQueryString();
-        $modules = Audit::distinct()->orderBy('module')->pluck('module');
+        $audits = $query->paginate(50)->withQueryString();
+
+        // Lista fija de módulos conocidos + los que ya existan en BD
+        $knownModules = ['rig', 'bomba', 'componente', 'log-diario', 'cable', 'operacion', 'pozo', 'usuario', 'configuración'];
+        $dbModules    = Audit::distinct()->orderBy('module')->pluck('module')->toArray();
+        $modules      = collect(array_unique(array_merge($knownModules, $dbModules)))->sort()->values();
 
         return view('audit.index', compact('audits', 'modules'));
     }

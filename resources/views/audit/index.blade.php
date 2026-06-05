@@ -86,15 +86,21 @@
                             'eliminó'   => '#FF4D2E',
                             'activó'    => '#4ade80',
                             'desactivó' => '#9ca3af',
+                            'reemplazó' => '#fb923c',
+                            'envió'     => '#c084fc',
                             default     => '#F0EDE8',
                         };
                         $moduleColor = match($a->module) {
-                            'usuario'    => '#a78bfa',
-                            'bomba'      => '#4ade80',
-                            'cable'      => '#06B6D4',
-                            'operacion'  => '#06B6D4',
-                            'log-diario' => '#4ade80',
-                            default      => '#9ca3af',
+                            'usuario'       => '#a78bfa',
+                            'rig'           => '#f97316',
+                            'bomba'         => '#4ade80',
+                            'componente'    => '#86efac',
+                            'log-diario'    => '#60a5fa',
+                            'cable'         => '#06B6D4',
+                            'operacion'     => '#22d3ee',
+                            'pozo'          => '#fbbf24',
+                            'configuración' => '#e879f9',
+                            default         => '#9ca3af',
                         };
                     @endphp
                     <tr style="border-top:1px solid #1a3040;">

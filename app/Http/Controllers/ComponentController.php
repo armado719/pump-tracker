@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pump;
 use App\Models\AssemblyComponent;
 use App\Models\MaintenanceEvent;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +34,9 @@ class ComponentController extends Controller
             'notes'      => 'nullable|string|max:500',
         ]);
 
+        $component->load('assembly');
+        $pump->load('rig');
+
         $hoursBefore = $component->componentHours()
             ->orderByDesc('id')->first()?->hours_accumulated
             ?? $component->installed_at_hours;
@@ -52,6 +56,9 @@ class ComponentController extends Controller
                 'installed_at_hours' => 0,
             ]);
         });
+
+        AuditService::log('reemplazó', 'componente',
+            "Reemplazó {$component->type_label} en Bomba #{$pump->number} ({$pump->rig->name}) — Conjunto {$component->assembly->position_label}");
 
         return redirect()->route('pumps.show', $pump)
             ->with('success', "'{$component->type_label}' reemplazado correctamente. El contador de horas reinicia en el próximo registro diario.");

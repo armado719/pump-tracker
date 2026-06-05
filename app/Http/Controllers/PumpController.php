@@ -7,6 +7,7 @@ use App\Models\Rig;
 use App\Models\DailyLog;
 use App\Models\AssemblyComponent;
 use App\Models\MaintenanceEvent;
+use App\Services\AuditService;
 use App\Services\ThresholdService;
 use Illuminate\Http\Request;
 
@@ -56,6 +57,8 @@ class PumpController extends Controller
             }
         }
 
+        $rig = Rig::find($data['rig_id']);
+        AuditService::log('creó', 'bomba', "Creó Bomba #{$data['number']} en {$rig->name}");
         return redirect()->route('pumps.show', $pump)->with('success', 'Bomba creada correctamente.');
     }
 
@@ -129,6 +132,7 @@ class PumpController extends Controller
             'base_accumulated_hours' => 'nullable|numeric|min:0',
         ]);
         $pump->update($data);
+        AuditService::log('actualizó', 'bomba', "Actualizó Bomba #{$pump->number} ({$pump->rig->name})");
         return redirect()->route('pumps.show', $pump)->with('success', 'Bomba actualizada.');
     }
 
@@ -146,6 +150,7 @@ class PumpController extends Controller
 
     public function destroy(Pump $pump)
     {
+        AuditService::log('eliminó', 'bomba', "Eliminó Bomba #{$pump->number} ({$pump->rig->name})");
         $pump->delete();
         return redirect()->route('rigs.show', $pump->rig_id)->with('success', 'Bomba eliminada.');
     }

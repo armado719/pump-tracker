@@ -7,6 +7,7 @@ use App\Models\Well;
 use App\Models\Pump;
 use App\Models\PumpAssembly;
 use App\Models\AssemblyComponent;
+use App\Services\AuditService;
 use App\Services\ThresholdService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +61,7 @@ class RigController extends Controller
             }
         });
 
+        AuditService::log('creó', 'rig', "Creó rig {$data['name']}");
         return redirect()->route('rigs.index')->with('success', 'Rig creado exitosamente.');
     }
 
@@ -92,12 +94,14 @@ class RigController extends Controller
             'tm_alerta_pct'          => 'nullable|numeric|min:1|max:100',
         ]);
         $rig->update($data);
+        AuditService::log('actualizó', 'rig', "Actualizó rig {$rig->name}");
         return redirect()->route('rigs.show', $rig)->with('success', 'Rig actualizado.');
     }
 
     public function destroy(Rig $rig)
     {
         $this->authorize('admin');
+        AuditService::log('eliminó', 'rig', "Eliminó rig {$rig->name}");
         $rig->delete();
         return redirect()->route('rigs.index')->with('success', 'Rig eliminado.');
     }
