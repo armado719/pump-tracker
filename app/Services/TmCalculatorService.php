@@ -114,7 +114,7 @@ class TmCalculatorService
         $large = $pct > 50 ? 1 : 0;
         $path  = "M " . ($cx - $r) . " $cy A $r $r 0 $large 1 $x $y";
 
-        $color = $pct >= 95 ? '#FF4D2E' : ($pct >= 80 ? '#EAB308' : '#E8A045');
+        $color = $pct >= 95 ? '#FF4D2E' : ($pct >= 80 ? '#EAB308' : '#06B6D4');
 
         return compact('path', 'color', 'pct', 'x', 'y');
     }
