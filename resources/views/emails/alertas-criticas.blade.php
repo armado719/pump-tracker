@@ -31,7 +31,7 @@
 <body>
 <div class="wrapper">
   <div class="header">
-    <h1>GRS — General Rigs Services S.A.</h1>
+    <h1>GRS — General Rigs Services S.A.S.</h1>
     <p>Reporte de Alertas — {{ $rigName }} — {{ now()->format('d/m/Y H:i') }}</p>
   </div>
 
@@ -108,10 +108,12 @@
   </div>
 
   <div class="footer">
-    <strong>GRS — General Rigs Services S.A.</strong><br>
+    <strong>GRS — General Rigs Services S.A.S.</strong><br>
     Tel: (+571) 876-7422 &nbsp;|&nbsp;
     <a href="mailto:operaciones@grssa.com" style="color:#6b7280;">operaciones@grssa.com</a> &nbsp;|&nbsp;
     <a href="https://www.grssa.com" style="color:#6b7280;">www.grssa.com</a><br>
+    Km 12 vía Barrancabermeja–Bucaramanga, Sector La Virgen &nbsp;|&nbsp;
+    Terrapuerto P.I. El Dorado, Bod. 26 Vía Siberia–Bogotá<br>
     <span style="color:#9ca3af;">Pump Tracker — {{ now()->format('d/m/Y H:i') }} — Mensaje automático, no responder.</span>
   </div>
 </div>

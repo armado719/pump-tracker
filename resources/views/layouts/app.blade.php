@@ -23,7 +23,7 @@
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
             <div style="display:none;width:80px;height:80px;border-radius:50%;align-items:center;justify-content:center;font-size:1.75rem;font-weight:900;background-color:#1a3528;color:#4ade80;box-shadow:0 0 0 2px #1a6b4a;margin-bottom:8px;">G</div>
             <span class="text-sm font-bold tracking-widest text-white">GRS</span>
-            <span style="font-size:0.7rem;color:#6b9e82;">General Rigs Services</span>
+            <span style="font-size:0.7rem;color:#6b9e82;">General Rigs Services S.A.S.</span>
         </div>
 
         <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">

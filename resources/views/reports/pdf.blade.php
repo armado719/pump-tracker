@@ -103,8 +103,9 @@
 </table>
 
 <p style="font-size:7px;color:#666;margin-top:8px;text-align:right">
-  GRS — General Rigs Services S.A. &nbsp;|&nbsp; Tel: (+571) 876-7422 &nbsp;|&nbsp;
-  operaciones@grssa.com &nbsp;|&nbsp; www.grssa.com &nbsp;|&nbsp;
+  <strong>GRS — General Rigs Services S.A.S.</strong> &nbsp;|&nbsp; Tel: (+571) 876-7422 &nbsp;|&nbsp; operaciones@grssa.com &nbsp;|&nbsp; www.grssa.com<br>
+  Sede 1: Km 12 vía Barrancabermeja–Bucaramanga, Sector La Virgen – Base de mantenimiento ANI &nbsp;|&nbsp;
+  Sede 2: Terrapuerto P.I. El Dorado, Bod. 26 Vía Siberia–Bogotá (Calle 80), Entrada Parque La Florida Km 1<br>
   Generado: {{ now()->format('d/m/Y H:i') }} &nbsp;|&nbsp; Período: {{ $year }}-{{ $month }}
 </p>
 </body>
