@@ -108,13 +108,25 @@
                         <span style="color:#F0EDE8;">{{ $cable->fabricante ?? '—' }}</span>
                     </div>
                     <div>
-                        <span class="block text-xs uppercase font-medium" style="color:#4a8a9e;">Grado</span>
-                        <span style="color:#F0EDE8;">{{ $cable->grado }}</span>
+                        <span class="block text-xs uppercase font-medium" style="color:#4a8a9e;">Grado / Diámetro</span>
+                        <span style="color:#F0EDE8;">{{ $cable->grado }} — {{ $cable->diametro_in ?? '—' }}</span>
                     </div>
                     <div>
                         <span class="block text-xs uppercase font-medium" style="color:#4a8a9e;">Instalación</span>
                         <span style="color:#F0EDE8;">{{ $cable->fecha_instalacion->format('d/m/Y') }}</span>
                     </div>
+                    @if($cable->resistencia_lb)
+                    <div>
+                        <span class="block text-xs uppercase font-medium" style="color:#4a8a9e;">Resistencia</span>
+                        <span class="font-mono" style="color:#F0EDE8;">{{ number_format($cable->resistencia_lb, 0) }} lb</span>
+                    </div>
+                    @endif
+                    @if($cable->longitud_inicial_ft)
+                    <div>
+                        <span class="block text-xs uppercase font-medium" style="color:#4a8a9e;">Long. inicial</span>
+                        <span class="font-mono" style="color:#F0EDE8;">{{ number_format($cable->longitud_inicial_ft, 0) }} ft</span>
+                    </div>
+                    @endif
                 </div>
             </div>
             @else
@@ -153,6 +165,20 @@
                                 <option value="EEIP">EEIP</option>
                                 <option value="IPS">IPS</option>
                             </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">Diámetro</label>
+                            <input type="text" name="diametro_in" value='1 1/8"'
+                                   class="w-full rounded-lg px-3 py-2 text-sm font-mono"
+                                   style="background:#00111a;border:1px solid #003344;color:#F0EDE8;"
+                                   placeholder='ej. 1 1/8"'>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">Resistencia (lb)</label>
+                            <input type="number" name="resistencia_lb" step="0.01"
+                                   class="w-full rounded-lg px-3 py-2 text-sm font-mono"
+                                   style="background:#00111a;border:1px solid #003344;color:#F0EDE8;"
+                                   placeholder="ej. 89500">
                         </div>
                         <div>
                             <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">Fecha instalación *</label>

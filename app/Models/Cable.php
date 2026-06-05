@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Cable extends Model
 {
     protected $fillable = [
-        'rig_id','serial','referencia','fabricante','grado',
+        'rig_id','serial','referencia','fabricante','grado','diametro_in','resistencia_lb',
         'fecha_instalacion','longitud_inicial_ft','activo',
     ];
 

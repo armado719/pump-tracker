@@ -102,6 +102,8 @@ class CableController extends Controller
             'referencia'         => 'nullable|string|max:100',
             'fabricante'         => 'nullable|string|max:80',
             'grado'              => 'required|in:EIP,EEIP,IPS',
+            'diametro_in'        => 'nullable|string|max:20',
+            'resistencia_lb'     => 'nullable|numeric|min:0',
             'fecha_instalacion'  => 'required|date',
             'longitud_inicial_ft'=> 'nullable|numeric|min:0',
         ]);
