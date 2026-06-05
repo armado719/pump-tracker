@@ -16,6 +16,48 @@
         </a>
     </div>
 
+    {{-- FILTROS --}}
+    <form method="GET" action="{{ route('cable.operaciones.index') }}"
+          class="rounded-xl p-4 flex flex-wrap gap-3 items-end"
+          style="background:#001a1f;border:1px solid #003344;">
+
+        <div>
+            <label class="block text-xs uppercase font-medium mb-1" style="color:#4a8a9e;">Desde</label>
+            <input type="date" name="desde" value="{{ request('desde') }}"
+                   class="rounded-lg px-3 py-2 text-sm"
+                   style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
+        </div>
+
+        <div>
+            <label class="block text-xs uppercase font-medium mb-1" style="color:#4a8a9e;">Hasta</label>
+            <input type="date" name="hasta" value="{{ request('hasta') }}"
+                   class="rounded-lg px-3 py-2 text-sm"
+                   style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
+        </div>
+
+        <div class="flex-1 min-w-48">
+            <label class="block text-xs uppercase font-medium mb-1" style="color:#4a8a9e;">Tipo de Operación</label>
+            <select name="cod" class="w-full rounded-lg px-3 py-2 text-sm"
+                    style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
+                <option value="">Todos los tipos</option>
+                @foreach($tiposCod as $cod => $nombre)
+                    <option value="{{ $cod }}" {{ request('cod') == $cod ? 'selected' : '' }}>
+                        COD {{ $cod }} — {{ $nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="px-4 py-2 rounded-lg text-sm font-bold transition"
+                style="background:#06B6D4;color:#00111a;">
+            Filtrar
+        </button>
+        <a href="{{ route('cable.operaciones.index') }}" class="px-4 py-2 rounded-lg text-sm transition"
+           style="background:#00111a;color:#4a8a9e;border:1px solid #003344;">
+            Limpiar
+        </a>
+    </form>
+
     <div class="rounded-xl overflow-hidden" style="background:#001a1f;border:1px solid #003344;">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">

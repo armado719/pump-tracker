@@ -17,8 +17,8 @@ class PumpController extends Controller
     {
         $user  = auth()->user();
         $pumps = $user->role === 'admin'
-            ? Pump::with('rig')->get()
-            : Pump::whereHas('rig', fn($q) => $q->where('id', $user->rig_id))->with('rig')->get();
+            ? Pump::with('rig')->orderBy('rig_id')->orderBy('number')->paginate(20)
+            : Pump::whereHas('rig', fn($q) => $q->where('id', $user->rig_id))->with('rig')->orderBy('number')->paginate(20);
 
         return view('pumps.index', compact('pumps'));
     }

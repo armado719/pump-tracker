@@ -5,7 +5,7 @@
 @section('content')
 <div class="pt-4">
     <div class="flex justify-between items-center mb-5">
-        <p class="text-gray-500 text-sm">{{ $pumps->count() }} bomba(s)</p>
+        <p class="text-gray-500 text-sm">{{ $pumps->total() }} bomba(s)</p>
         <a href="{{ route('pumps.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium">+ Nueva Bomba</a>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -37,6 +37,9 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
+    <div class="mt-4">
+        {{ $pumps->links() }}
     </div>
 </div>
 @endsection

@@ -30,10 +30,22 @@ class OperacionTmController extends Controller
     public function index()
     {
         $cable = $this->cableActivo();
-        $operaciones = $cable->operaciones()
-            ->orderByDesc('fecha')->orderByDesc('id')
-            ->paginate(20);
-        return view('cable.operaciones.index', compact('cable', 'operaciones'));
+        $query = $cable->operaciones()->orderByDesc('fecha')->orderByDesc('id');
+
+        if (request()->filled('desde')) {
+            $query->whereDate('fecha', '>=', request('desde'));
+        }
+        if (request()->filled('hasta')) {
+            $query->whereDate('fecha', '<=', request('hasta'));
+        }
+        if (request()->filled('cod')) {
+            $query->where('cod', request('cod'));
+        }
+
+        $operaciones = $query->paginate(20)->withQueryString();
+        $tiposCod    = TmCalculatorService::OPERACIONES;
+
+        return view('cable.operaciones.index', compact('cable', 'operaciones', 'tiposCod'));
     }
 
     public function create()
