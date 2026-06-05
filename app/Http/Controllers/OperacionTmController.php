@@ -9,14 +9,24 @@ use App\Models\CorteCable;
 use App\Services\TmCalculatorService;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OperacionTmController extends Controller
 {
-    private function cableActivo(): Cable
+    private function rigActivo(): Rig
     {
         $user = auth()->user();
-        $rig  = $user->rig_id ? Rig::findOrFail($user->rig_id) : Rig::first();
-        $cable = $rig?->cableActivo();
+        if ($user->rig_id) {
+            return Rig::findOrFail($user->rig_id);
+        }
+        $rigId = session('cable_rig_id');
+        return ($rigId ? Rig::find($rigId) : null) ?? Rig::first() ?? abort(404);
+    }
+
+    private function cableActivo(): Cable
+    {
+        $rig   = $this->rigActivo();
+        $cable = $rig->cableActivo();
 
         if (!$cable) {
             redirect()->route('cable.dashboard')
@@ -29,23 +39,33 @@ class OperacionTmController extends Controller
 
     public function index()
     {
-        $cable = $this->cableActivo();
-        $query = $cable->operaciones()->orderByDesc('fecha')->orderByDesc('id');
+        $user  = auth()->user();
+        $rig   = $this->rigActivo();
+        $cable = $rig->cableActivo();
 
-        if (request()->filled('desde')) {
-            $query->whereDate('fecha', '>=', request('desde'));
-        }
-        if (request()->filled('hasta')) {
-            $query->whereDate('fecha', '<=', request('hasta'));
-        }
-        if (request()->filled('cod')) {
-            $query->where('cod', request('cod'));
+        $rigsDisponibles = !$user->rig_id ? Rig::orderBy('name')->get() : collect();
+
+        $operaciones = new LengthAwarePaginator([], 0, 20);
+        if ($cable) {
+            $query = $cable->operaciones()->orderByDesc('fecha')->orderByDesc('id');
+
+            if (request()->filled('desde')) {
+                $query->whereDate('fecha', '>=', request('desde'));
+            }
+            if (request()->filled('hasta')) {
+                $query->whereDate('fecha', '<=', request('hasta'));
+            }
+            if (request()->filled('cod')) {
+                $query->where('cod', request('cod'));
+            }
+
+            $operaciones = $query->paginate(20)->withQueryString();
         }
 
-        $operaciones = $query->paginate(20)->withQueryString();
-        $tiposCod    = TmCalculatorService::OPERACIONES;
+        $tiposCod = TmCalculatorService::OPERACIONES;
 
-        return view('cable.operaciones.index', compact('cable', 'operaciones', 'tiposCod'));
+        return view('cable.operaciones.index',
+            compact('cable', 'rig', 'rigsDisponibles', 'operaciones', 'tiposCod'));
     }
 
     public function create()

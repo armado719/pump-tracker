@@ -29,7 +29,7 @@ class CableController extends Controller
     {
         $request->validate(['rig_id' => 'required|exists:rigs,id']);
         session(['cable_rig_id' => $request->rig_id]);
-        return redirect()->route('cable.dashboard');
+        return redirect()->back()->fallback(route('cable.dashboard'));
     }
 
     public function dashboard()

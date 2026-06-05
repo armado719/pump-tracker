@@ -4,17 +4,57 @@
 @section('content')
 <div class="pt-4 space-y-4">
 
+    {{-- SELECTOR DE EQUIPO --}}
+    @if($rigsDisponibles->count() > 1)
+    <div class="flex items-center gap-3 px-5 py-3 rounded-xl"
+         style="background:#001a1f;border:1px solid #003344;">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="#4a8a9e" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+        <span class="text-xs font-bold uppercase tracking-widest" style="color:#4a8a9e;">Equipo</span>
+        <form method="POST" action="{{ route('cable.seleccionar-rig') }}" class="flex items-center gap-2 flex-1">
+            @csrf
+            <select name="rig_id" onchange="this.form.submit()"
+                    class="flex-1 rounded-lg px-3 py-1.5 text-sm font-medium"
+                    style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
+                @foreach($rigsDisponibles as $r)
+                    <option value="{{ $r->id }}" {{ $r->id === $rig->id ? 'selected' : '' }}>
+                        {{ $r->name }}{{ $r->location ? ' — ' . $r->location : '' }}
+                    </option>
+                @endforeach
+            </select>
+        </form>
+    </div>
+    @endif
+
     <div class="flex justify-between items-center">
         <div>
-            <p class="text-xs uppercase font-bold" style="color:#4a8a9e;">Cable: <span style="color:#06B6D4;" class="font-mono">{{ $cable->serial }}</span></p>
+            <p class="text-xs uppercase font-bold" style="color:#4a8a9e;">
+                Rig: <span style="color:#F0EDE8;">{{ $rig->name }}</span>
+                @if($cable)
+                — Cable: <span style="color:#06B6D4;" class="font-mono">{{ $cable->serial }}</span>
+                @endif
+            </p>
             <p class="text-xs" style="color:#4a8a9e;">{{ $operaciones->total() }} operaciones registradas</p>
         </div>
+        @if($cable)
         <a href="{{ route('cable.operaciones.create') }}"
            class="text-sm font-bold px-4 py-2 rounded-lg transition"
            style="background:#06B6D4;color:#00111a;">
             + Nueva operación
         </a>
+        @endif
     </div>
+
+    @if(!$cable)
+    <div class="px-5 py-8 text-center rounded-xl" style="background:#001a1f;border:1px solid #003344;">
+        <p class="text-sm" style="color:#4a8a9e;">Este rig no tiene cable activo registrado.</p>
+        <a href="{{ route('cable.dashboard') }}" class="text-xs mt-2 inline-block hover:underline" style="color:#06B6D4;">
+            Ir al dashboard para registrar un cable →
+        </a>
+    </div>
+    @endif
 
     {{-- FILTROS --}}
     <form method="GET" action="{{ route('cable.operaciones.index') }}"
