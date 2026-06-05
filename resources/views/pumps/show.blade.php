@@ -7,7 +7,21 @@
 <div class="pt-4 space-y-5">
 
     {{-- Acción principal --}}
-    <div class="flex justify-end gap-2">
+    <div class="flex justify-end gap-2 flex-wrap">
+        @if(auth()->user()->role === 'admin')
+        <a href="{{ route('pumps.edit', $pump) }}"
+           class="text-sm border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg text-gray-600 transition">
+            ✏️ Editar
+        </a>
+        <form method="POST" action="{{ route('pumps.destroy', $pump) }}"
+              onsubmit="return confirm('¿Eliminar Bomba #{{ $pump->number }}? Se perderán todos los registros. Esta acción no se puede deshacer.')">
+            @csrf @method('DELETE')
+            <button type="submit"
+                    class="text-sm border border-red-300 hover:bg-red-50 px-4 py-2 rounded-lg text-red-600 transition">
+                🗑️ Eliminar
+            </button>
+        </form>
+        @endif
         <a href="{{ route('pumps.replacements', $pump) }}"
            class="text-sm border border-orange-300 hover:bg-orange-50 px-4 py-2 rounded-lg text-orange-600 transition">
             🔧 Historial Reemplazos

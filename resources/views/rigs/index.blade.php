@@ -38,6 +38,14 @@
                        class="px-3 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm py-2 rounded-lg transition">
                         ✏️
                     </a>
+                    <form method="POST" action="{{ route('rigs.destroy', $rig) }}"
+                          onsubmit="return confirm('¿Eliminar rig {{ $rig->name }}? Esta acción no se puede deshacer.')">
+                        @csrf @method('DELETE')
+                        <button type="submit"
+                                class="px-3 bg-red-50 hover:bg-red-100 text-red-600 text-sm py-2 rounded-lg transition">
+                            🗑️
+                        </button>
+                    </form>
                     @endif
                 </div>
             </div>

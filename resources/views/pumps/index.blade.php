@@ -32,6 +32,13 @@
                         <a href="{{ route('pumps.show', $pump) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
                         <a href="{{ route('pumps.edit', $pump) }}" class="text-yellow-600 hover:underline text-xs">Editar</a>
                         <a href="{{ route('pumps.logs.create', $pump) }}" class="text-green-600 hover:underline text-xs">📝 Reg.</a>
+                        @if(auth()->user()->role === 'admin')
+                        <form method="POST" action="{{ route('pumps.destroy', $pump) }}" class="inline"
+                              onsubmit="return confirm('¿Eliminar Bomba #{{ $pump->number }} ({{ $pump->rig->name }})? Esta acción no se puede deshacer.')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:underline text-xs">Eliminar</button>
+                        </form>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
