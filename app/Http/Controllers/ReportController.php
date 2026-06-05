@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pump;
+use App\Models\Cable;
 use App\Models\DailyLog;
 use App\Services\ThresholdService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,14 +18,18 @@ class ReportController extends Controller
             ? Pump::with('rig')->get()
             : Pump::whereHas('rig', fn($q) => $q->where('id', $user->rig_id))->with('rig')->get();
 
-        return view('reports.index', compact('pumps'));
+        $cables = ($user->role === 'admin' || !$user->rig_id)
+            ? Cable::with('rig')->orderByDesc('activo')->orderBy('rig_id')->get()
+            : Cable::whereHas('rig', fn($q) => $q->where('id', $user->rig_id))->with('rig')->orderByDesc('activo')->get();
+
+        return view('reports.index', compact('pumps', 'cables'));
     }
 
     public function generate(Request $request)
     {
         $data = $request->validate([
-            'pump_id'    => 'required|exists:pumps,id',
-            'month'      => 'required|date_format:Y-m',
+            'pump_id' => 'required|exists:pumps,id',
+            'month'   => 'required|date_format:Y-m',
         ]);
 
         $pump = Pump::with([
@@ -49,19 +54,17 @@ class ReportController extends Controller
             ->orderByDesc('period_start')
             ->first();
 
-        // Preparar datos por día con todas las columnas
         $tableRows = $logs->map(function($log) use ($pump) {
             $row = [
-                'day'       => $log->day_number,
-                'date'      => $log->log_date->format('d/m/Y'),
-                'hours'     => $log->hours_worked,
-                'accum'     => $log->accumulated_hours,
-                'dampener'  => $log->dampener_pressure,
-                'comments'  => $log->comments,
-                'components'=> [],
+                'day'        => $log->day_number,
+                'date'       => $log->log_date->format('d/m/Y'),
+                'hours'      => $log->hours_worked,
+                'accum'      => $log->accumulated_hours,
+                'dampener'   => $log->dampener_pressure,
+                'comments'   => $log->comments,
+                'components' => [],
             ];
 
-            // Indexar horas por component_id
             $chByComp = $log->componentHours->keyBy('component_id');
 
             foreach ($pump->assemblies as $assembly) {
@@ -78,6 +81,28 @@ class ReportController extends Controller
             ->setPaper('A3', 'landscape');
 
         $filename = "FGOP_{$pump->rig->name}_Bomba{$pump->number}_{$year}-{$month}.pdf";
+
+        return $pdf->download($filename);
+    }
+
+    public function cableGenerate(Request $request)
+    {
+        $data = $request->validate(['cable_id' => 'required|exists:cables,id']);
+
+        $cable = Cable::with([
+            'rig',
+            'operaciones' => fn($q) => $q->orderBy('fecha')->orderBy('id'),
+            'cortes',
+        ])->findOrFail($data['cable_id']);
+
+        $tmAcum = round($cable->tmAcumulado(), 4);
+        $tmMax  = $cable->rig->tm_max_corte ?? 1200;
+        $tmPct  = $tmMax > 0 ? round($tmAcum / $tmMax * 100, 1) : 0;
+
+        $pdf = Pdf::loadView('cable.reporte-pdf', compact('cable', 'tmAcum', 'tmMax', 'tmPct'))
+            ->setPaper('A3', 'landscape');
+
+        $filename = "TM_{$cable->rig->name}_{$cable->serial}_" . now()->format('Ymd') . '.pdf';
 
         return $pdf->download($filename);
     }

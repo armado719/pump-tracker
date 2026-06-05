@@ -56,8 +56,20 @@ class CableController extends Controller
         // Solo usuarios sin rig fijo (admin) ven el selector
         $rigsDisponibles = !$user->rig_id ? Rig::orderBy('name')->get() : collect();
 
+        // Datos para gráfica de tendencia TM
+        $chartLabels = [];
+        $chartTmAcum = [];
+        if ($cable) {
+            $ops = $cable->operaciones()->orderBy('fecha')->orderBy('id')->get(['fecha', 'tm_acumulado']);
+            foreach ($ops as $op) {
+                $chartLabels[] = $op->fecha->format('d/m/y');
+                $chartTmAcum[] = round((float) $op->tm_acumulado, 2);
+            }
+        }
+
         return view('cable.dashboard', compact(
-            'rig','cable','tmAcum','tmMax','tmPct','gauge','alerta','ultimas','cables','rigsDisponibles'
+            'rig','cable','tmAcum','tmMax','tmPct','gauge','alerta','ultimas','cables',
+            'rigsDisponibles','chartLabels','chartTmAcum'
         ));
     }
 

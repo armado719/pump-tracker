@@ -85,8 +85,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
 
     // Reportes PDF
-    Route::get('/reports',           [ReportController::class, 'index'])->name('reports.index');
-    Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
+    Route::get('/reports',                [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate',      [ReportController::class, 'generate'])->name('reports.generate');
+    Route::post('/reports/cable/generate',[ReportController::class, 'cableGenerate'])->name('reports.cable.generate');
+
+    // Notificaciones de alertas
+    Route::post('/alerts/notificar',      [AlertController::class, 'notificar'])->name('alerts.notificar');
 
     // Gestión de usuarios — solo admin
     Route::middleware('admin')->group(function () {

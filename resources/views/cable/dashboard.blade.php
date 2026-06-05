@@ -257,6 +257,17 @@
         </div>
     </div>
 
+    {{-- GRÁFICA TM ACUMULADO --}}
+    @if($cable && count($chartLabels) > 1)
+    <div class="rounded-2xl p-5" style="background:#001a1f;border:1px solid #003344;">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xs font-bold uppercase tracking-widest" style="color:#4a8a9e;">Tendencia TM Acumulado</h3>
+            <span class="text-xs font-mono" style="color:#06B6D4;">{{ count($chartLabels) }} operaciones</span>
+        </div>
+        <canvas id="tmChart" height="70"></canvas>
+    </div>
+    @endif
+
     {{-- HISTORIAL CABLES --}}
     @if($cables->count() > 1 || ($cables->count() === 1 && !$cable))
     <div class="rounded-2xl overflow-hidden" style="background:#001a1f;border:1px solid #003344;">
@@ -297,3 +308,55 @@
 
 </div>
 @endsection
+
+@push('scripts')
+@if($cable && count($chartLabels) > 1)
+<script>
+new Chart(document.getElementById('tmChart'), {
+    type: 'line',
+    data: {
+        labels: @json($chartLabels),
+        datasets: [
+            {
+                label: 'TM Acumulado',
+                data: @json($chartTmAcum),
+                borderColor: '#06B6D4',
+                backgroundColor: 'rgba(6,182,212,0.08)',
+                borderWidth: 2,
+                pointRadius: {{ count($chartLabels) > 40 ? 0 : 3 }},
+                fill: true,
+                tension: 0.3,
+            },
+            {
+                label: 'Límite TM ({{ $tmMax }})',
+                data: Array({{ count($chartLabels) }}).fill({{ $tmMax }}),
+                borderColor: '#FF4D2E',
+                borderWidth: 1,
+                borderDash: [6, 4],
+                pointRadius: 0,
+                fill: false,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { labels: { color: '#4a8a9e', font: { size: 11 } } }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#4a8a9e', maxTicksLimit: 14, font: { size: 10 } },
+                grid: { color: '#003344' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: '#4a8a9e', font: { size: 10 } },
+                grid: { color: '#003344' },
+                title: { display: true, text: 'TM', color: '#4a8a9e', font: { size: 10 } }
+            }
+        }
+    }
+});
+</script>
+@endif
+@endpush
