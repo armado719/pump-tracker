@@ -13,6 +13,7 @@ use App\Http\Controllers\WellController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CableController;
 use App\Http\Controllers\OperacionTmController;
+use App\Http\Controllers\GerenciaController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz al dashboard
@@ -97,6 +98,9 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/users/{user}/toggle',   [UserController::class, 'toggle'])->name('users.toggle');
         Route::delete('/users/{user}',         [UserController::class, 'destroy'])->name('users.destroy');
     });
+
+    // ── Panel Gerencial ───────────────────────────────────────────────────────
+    Route::get('/gerencia', [GerenciaController::class, 'dashboard'])->name('gerencia.dashboard');
 
     // ── Cable TM ─────────────────────────────────────────────────────────────
     Route::prefix('cable')->name('cable.')->group(function () {

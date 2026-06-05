@@ -93,6 +93,28 @@
                 Reportes
             </a>
 
+            {{-- ── GERENCIA ── --}}
+            <div class="px-3 pt-4 pb-1">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-px" style="background:#2a1f3d;"></div>
+                    <span class="text-xs font-black tracking-widest" style="color:#7c6fa0;">GERENCIA</span>
+                    <div class="flex-1 h-px" style="background:#2a1f3d;"></div>
+                </div>
+            </div>
+
+            <a href="{{ route('gerencia.dashboard') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('gerencia.*') ? 'background-color:#1e1040;color:#a78bfa;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#150e2a'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
+               {{ request()->routeIs('gerencia.*') ? 'data-active=1' : '' }}>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Panel Gerencial
+            </a>
+
             {{-- ── CABLE TM ── --}}
             <div class="px-3 pt-4 pb-1">
                 <div class="flex items-center gap-2">
