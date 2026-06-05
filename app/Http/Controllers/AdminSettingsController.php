@@ -27,7 +27,11 @@ class AdminSettingsController extends Controller
 
     public function mailForm()
     {
-        $settings = Setting::whereIn('key', self::MAIL_KEYS)->get()->pluck('value', 'key');
+        try {
+            $settings = Setting::whereIn('key', self::MAIL_KEYS)->get()->pluck('value', 'key');
+        } catch (\Throwable) {
+            $settings = collect();
+        }
         return view('admin.settings.mail', compact('settings'));
     }
 
@@ -44,11 +48,15 @@ class AdminSettingsController extends Controller
             'mail_from_name'    => 'required|string|max:100',
         ]);
 
-        foreach ($data as $key => $value) {
-            if ($key === 'mail_password' && ($value === null || $value === '')) {
-                continue;
+        try {
+            foreach ($data as $key => $value) {
+                if ($key === 'mail_password' && ($value === null || $value === '')) {
+                    continue;
+                }
+                Setting::set($key, $value);
             }
-            Setting::set($key, $value);
+        } catch (\Throwable $e) {
+            return back()->with('error', 'No se pudo guardar: ' . $e->getMessage() . ' — Ejecuta php artisan migrate primero.');
         }
 
         AuditService::log('actualizó', 'configuración', 'Actualizó configuración de correo SMTP');
