@@ -4,7 +4,8 @@
 @section('content')
 <div class="pt-4 max-w-3xl mx-auto space-y-4"
      x-data="tmForm()"
-     x-init="init()">
+     x-init="init()"
+     x-cloak>
 
     <div class="flex items-center justify-between">
         <a href="{{ route('cable.dashboard') }}" class="text-sm hover:underline" style="color:#4a8a9e;">← Volver</a>
@@ -47,14 +48,26 @@
                            style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">Tipo de Operación *</label>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-medium uppercase" style="color:#4a8a9e;">Tipo de Operación *</label>
+                        <div class="flex rounded overflow-hidden text-xs font-bold" style="border:1px solid #003344;">
+                            <button type="button"
+                                    @click="setLang('es')"
+                                    :style="lang==='es' ? 'background:#06B6D4;color:#00111a;' : 'background:#00111a;color:#4a8a9e;'"
+                                    class="px-2 py-0.5 transition">ES</button>
+                            <button type="button"
+                                    @click="setLang('en')"
+                                    :style="lang==='en' ? 'background:#06B6D4;color:#00111a;' : 'background:#00111a;color:#4a8a9e;'"
+                                    class="px-2 py-0.5 transition">EN</button>
+                        </div>
+                    </div>
                     <select name="cod" required x-model="cod"
                             @change="recalcular()"
                             class="w-full rounded-lg px-3 py-2 text-sm"
                             style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
-                        @foreach($operaciones as $k => $v)
-                            <option value="{{ $k }}">{{ $v }}</option>
-                        @endforeach
+                        <template x-for="op in currentOps" :key="op.cod">
+                            <option :value="op.cod" :selected="op.cod === cod" x-text="op.label"></option>
+                        </template>
                     </select>
                 </div>
                 <div class="col-span-2">
@@ -200,9 +213,13 @@
 
 @push('scripts')
 <script>
+const _opsEs = @json(collect($operaciones)->map(fn($v,$k) => ['cod'=>$k,'label'=>$v])->values());
+const _opsEn = @json(collect($operacionesEn)->map(fn($v,$k) => ['cod'=>$k,'label'=>$v])->values());
+
 function tmForm() {
     return {
         cod:        '1',
+        lang:       localStorage.getItem('tm_lang') || 'es',
         profIni:    {{ old('prof_inicial_ft', $ultima?->prof_final_ft ?? 0) }},
         profFin:    {{ old('prof_final_ft', $ultima?->prof_final_ft ?? 0) }},
         densidad:   {{ old('densidad_lodo_ppg', $ultima?->densidad_lodo_ppg ?? 11.5) }},
@@ -215,6 +232,12 @@ function tmForm() {
 
         get esCod14() { return this.cod === '14'; },
         get esCod13() { return this.cod === '13'; },
+        get currentOps() { return this.lang === 'en' ? _opsEn : _opsEs; },
+
+        setLang(l) {
+            this.lang = l;
+            localStorage.setItem('tm_lang', l);
+        },
 
         init() { this.recalcular(); },
 

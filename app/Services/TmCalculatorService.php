@@ -40,6 +40,24 @@ class TmCalculatorService
         '14' => 'COD 14 — Corte / Reemplazo de cable',
     ];
 
+    const OPERACIONES_EN = [
+        '1'  => 'COD 1  — POOH / RIH (Pulling Out / Running In Hole)',
+        '1B' => 'COD 1B — Short Trip',
+        '2'  => 'COD 2  — Drilling with Top Drive',
+        '3'  => 'COD 3  — Drilling + Reaming with Top Drive',
+        '4'  => 'COD 4  — Coring with Top Drive',
+        '5'  => 'COD 5  — Running Casing',
+        '6'  => 'COD 6  — Working Casing',
+        '7'  => 'COD 7  — Jarring Down',
+        '8'  => 'COD 8  — Jarring Up',
+        '9'  => 'COD 9  — Pulling on Stuck Pipe',
+        '10' => 'COD 10 — Drilling with Kelly',
+        '11' => 'COD 11 — Drilling + Reaming with Kelly',
+        '12' => 'COD 12 — Coring with Kelly',
+        '13' => 'COD 13 — Cable Rotation (Hydraulic)',
+        '14' => 'COD 14 — Cut / Replace Cable',
+    ];
+
     /**
      * Calcula TM para una operación.
      *

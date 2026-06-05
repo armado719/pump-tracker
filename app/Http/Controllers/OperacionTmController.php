@@ -41,8 +41,9 @@ class OperacionTmController extends Controller
         $rig     = $cable->rig;
         $ultima  = $cable->ultimaOperacion();
         $tmAcum  = $cable->tmAcumulado();
-        $operaciones = TmCalculatorService::OPERACIONES;
-        return view('cable.operaciones.create', compact('cable','rig','ultima','tmAcum','operaciones'));
+        $operaciones   = TmCalculatorService::OPERACIONES;
+        $operacionesEn = TmCalculatorService::OPERACIONES_EN;
+        return view('cable.operaciones.create', compact('cable','rig','ultima','tmAcum','operaciones','operacionesEn'));
     }
 
     public function store(Request $request)
