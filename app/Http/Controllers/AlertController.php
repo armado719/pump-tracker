@@ -59,7 +59,39 @@ class AlertController extends Controller
         $criticalCount = collect($alerts)->where('status', 'critical')->count();
         $warningCount  = collect($alerts)->where('status', 'warning')->count();
 
-        return view('alerts.index', compact('alerts', 'criticalCount', 'warningCount'));
+        // ── Alertas de Cable TM ───────────────────────────────────────────────
+        $rigsConCables = $rigsQuery->with(['cables' => fn($q) => $q->where('activo', true)])->get();
+
+        $alertasCableTm = [];
+        foreach ($rigsConCables as $rig) {
+            $cable   = $rig->cables->first();
+            if (!$cable) continue;
+            $tmMax   = $rig->tm_max_corte ?? 1200;
+            $alerta  = $rig->tm_alerta_pct ?? 80;
+            $tmAcum  = round($cable->tmAcumulado(), 2);
+            $tmPct   = $tmMax > 0 ? round($tmAcum / $tmMax * 100, 1) : 0;
+            if ($tmPct >= $alerta) {
+                $alertasCableTm[] = [
+                    'rig'    => $rig->name,
+                    'serial' => $cable->serial,
+                    'grado'  => $cable->grado,
+                    'tmAcum' => $tmAcum,
+                    'tmMax'  => $tmMax,
+                    'tmPct'  => $tmPct,
+                    'status' => $tmPct >= 95 ? 'critical' : 'warning',
+                    'rigId'  => $rig->id,
+                ];
+            }
+        }
+        usort($alertasCableTm, fn($a, $b) => $b['tmPct'] <=> $a['tmPct']);
+
+        $tmCriticalCount = collect($alertasCableTm)->where('status', 'critical')->count();
+        $tmWarningCount  = collect($alertasCableTm)->where('status', 'warning')->count();
+
+        return view('alerts.index', compact(
+            'alerts', 'criticalCount', 'warningCount',
+            'alertasCableTm', 'tmCriticalCount', 'tmWarningCount'
+        ));
     }
 
     public function notificar()
