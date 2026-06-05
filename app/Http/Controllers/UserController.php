@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Rig;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -41,6 +42,7 @@ class UserController extends Controller
             'email_verified_at' => now(),
         ]);
 
+        AuditService::log('creó', 'usuario', "Creó usuario {$data['name']} ({$data['role']})");
         return redirect()->route('users.index')->with('success', "Usuario {$data['name']} creado correctamente.");
     }
 
@@ -71,6 +73,7 @@ class UserController extends Controller
             $user->update(['password' => Hash::make($data['password'])]);
         }
 
+        AuditService::log('actualizó', 'usuario', "Actualizó usuario {$user->name}");
         return redirect()->route('users.index')->with('success', "Usuario {$user->name} actualizado.");
     }
 
@@ -81,6 +84,7 @@ class UserController extends Controller
         }
         $user->update(['active' => !$user->active]);
         $estado = $user->active ? 'activado' : 'desactivado';
+        AuditService::log($estado, 'usuario', ucfirst($estado) . " cuenta de {$user->name}");
         return back()->with('success', "Usuario {$user->name} {$estado}.");
     }
 
@@ -89,6 +93,7 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return back()->with('error', 'No puedes eliminar tu propia cuenta.');
         }
+        AuditService::log('eliminó', 'usuario', "Eliminó usuario {$user->name} ({$user->email})");
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Usuario eliminado.');
     }

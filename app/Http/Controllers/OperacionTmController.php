@@ -7,6 +7,7 @@ use App\Models\Cable;
 use App\Models\OperacionTm;
 use App\Models\CorteCable;
 use App\Services\TmCalculatorService;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 
 class OperacionTmController extends Controller
@@ -109,6 +110,8 @@ class OperacionTmController extends Controller
 
             $cable->update(['activo' => false]);
 
+            AuditService::log('registró', 'operacion',
+                "COD 14 — Corte cable {$cable->serial} ({$rig->name}) — TM al corte: " . round($tmAcumNuevo, 2));
             return redirect()->route('cable.dashboard')
                 ->with('warning', "Corte registrado. Cable {$cable->serial} archivado. TM al corte: " . round($tmAcumNuevo, 2) . ' TM. Registra el nuevo cable.');
         }
@@ -125,6 +128,8 @@ class OperacionTmController extends Controller
             return redirect()->route('cable.dashboard')->with('warning', "⚠ ALERTA: {$msg}");
         }
 
+        AuditService::log('registró', 'operacion',
+            "COD {$data['cod']} — Cable {$cable->serial} ({$rig->name}) — TM: {$result['tm']} | Acum: " . round($tmAcumNuevo, 2));
         return redirect()->route('cable.dashboard')->with('success', $msg);
     }
 }

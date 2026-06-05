@@ -8,6 +8,7 @@ use App\Models\ComponentHour;
 use App\Models\MaintenanceEvent;
 use App\Models\AssemblyComponent;
 use App\Services\ThresholdService;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -133,6 +134,8 @@ class DailyLogController extends Controller
             }
         });
 
+        AuditService::log('registró', 'log-diario',
+            "Registró día {$data['day_number']} — Bomba #{$pump->number} ({$pump->rig->name}) — {$data['hours_worked']}h");
         return redirect()->route('pumps.show', $pump)
             ->with('success', "Registro del día {$data['day_number']} guardado correctamente.");
     }

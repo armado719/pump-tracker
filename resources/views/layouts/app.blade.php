@@ -173,6 +173,18 @@
             </a>
 
             @if(auth()->user()->isAdmin())
+            <a href="{{ route('audit.index') }}"
+               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
+               style="{{ request()->routeIs('audit.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
+               onmouseover="if(!this.dataset.active)this.style.backgroundColor='#152535'"
+               onmouseout="if(!this.dataset.active)this.style.backgroundColor=''"
+               {{ request()->routeIs('audit.*') ? 'data-active=1' : '' }}>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                Auditoría
+            </a>
             <a href="{{ route('users.index') }}"
                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
                style="{{ request()->routeIs('users.*') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
@@ -189,6 +201,17 @@
         </nav>
 
         <div class="px-4 py-4" style="border-top:1px solid #1a3528;">
+            <a href="{{ route('profile.edit') }}"
+               class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs mb-3 transition"
+               style="{{ request()->routeIs('profile.*') ? 'background:#0d4a35;color:#4ade80;' : 'color:#6b9e82;' }}"
+               onmouseover="this.style.backgroundColor='#152535'"
+               onmouseout="this.style.backgroundColor='{{ request()->routeIs('profile.*') ? '#0d4a35' : '' }}'">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Mi Perfil / Contraseña
+            </a>
             <div class="flex items-center gap-3 mb-3">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
                      style="background-color:#0d4a35;color:#4ade80;">

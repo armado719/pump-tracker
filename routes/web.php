@@ -14,6 +14,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CableController;
 use App\Http\Controllers\OperacionTmController;
 use App\Http\Controllers\GerenciaController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\AuditController;
 use Illuminate\Support\Facades\Route;
 
 // Redirigir raíz al dashboard
@@ -91,6 +93,15 @@ Route::middleware(['auth'])->group(function () {
 
     // Notificaciones de alertas
     Route::post('/alerts/notificar',      [AlertController::class, 'notificar'])->name('alerts.notificar');
+
+    // Exportar CSV
+    Route::post('/export/pump-hours',        [ExportController::class, 'pumpHours'])->name('export.pump-hours');
+    Route::post('/export/cable-operaciones', [ExportController::class, 'cableOperaciones'])->name('export.cable-operaciones');
+
+    // Auditoría — solo admin
+    Route::middleware('admin')->group(function () {
+        Route::get('/audit', [AuditController::class, 'index'])->name('audit.index');
+    });
 
     // Gestión de usuarios — solo admin
     Route::middleware('admin')->group(function () {

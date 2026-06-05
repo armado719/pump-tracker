@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Rig;
 use App\Models\Cable;
 use App\Services\TmCalculatorService;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 
 class CableController extends Controller
@@ -141,6 +142,7 @@ class CableController extends Controller
 
         $cable = $rig->cables()->create(array_merge($data, ['activo' => true]));
 
+        AuditService::log('registró', 'cable', "Registró cable {$cable->serial} ({$rig->name}) — {$cable->grado}");
         return redirect()->route('cable.dashboard')
             ->with('success', "Cable {$cable->serial} registrado y activado.");
     }

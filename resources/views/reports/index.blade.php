@@ -36,11 +36,30 @@
                     <input type="month" name="month" value="{{ now()->format('Y-m') }}" required
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm transition">
-                    📄 Descargar PDF — Bombas
-                </button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="submit" name="format" value="pdf"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm transition">
+                        📄 PDF
+                    </button>
+                    <button type="submit" form="pump-csv-form"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold text-sm transition">
+                        📊 Excel / CSV
+                    </button>
+                </div>
             </div>
         </form>
+        {{-- Form oculto para CSV que reutiliza los mismos campos --}}
+        <form id="pump-csv-form" method="POST" action="{{ route('export.pump-hours') }}" class="hidden">
+            @csrf
+            <input type="hidden" name="pump_id" id="csv_pump_id">
+            <input type="hidden" name="month" id="csv_month">
+        </form>
+        <script>
+        document.getElementById('pump-csv-form').addEventListener('submit', function() {
+            document.getElementById('csv_pump_id').value = document.querySelector('[name=pump_id]').value;
+            document.getElementById('csv_month').value = document.querySelector('[name=month]').value;
+        });
+        </script>
     </div>
 
     {{-- CABLE TM --}}
@@ -77,14 +96,32 @@
                         @endforeach
                     </select>
                 </div>
-                <button type="submit"
-                        class="w-full py-3 rounded-xl font-bold text-sm transition"
-                        style="background:#06B6D4;color:#00111a;">
-                    📄 Descargar PDF — Cable TM
-                </button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="submit"
+                            class="w-full py-3 rounded-xl font-bold text-sm transition"
+                            style="background:#06B6D4;color:#00111a;">
+                        📄 PDF
+                    </button>
+                    <button type="submit" form="cable-csv-form"
+                            class="w-full py-3 rounded-xl font-bold text-sm transition"
+                            style="background:#166534;color:#4ade80;">
+                        📊 Excel / CSV
+                    </button>
+                </div>
+            </div>
+        </form>
+        <form id="cable-csv-form" method="POST" action="{{ route('export.cable-operaciones') }}" class="hidden">
+            @csrf
+            <input type="hidden" name="cable_id" id="csv_cable_id">
+        </form>
+        <script>
+        document.getElementById('cable-csv-form').addEventListener('submit', function() {
+            document.getElementById('csv_cable_id').value = document.querySelector('[name=cable_id]').value;
+        });
             </div>
         </form>
     </div>
 
 </div>
 @endsection
+
