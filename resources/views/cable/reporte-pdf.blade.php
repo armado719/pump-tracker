@@ -168,8 +168,10 @@
 @endif
 
 <p class="footer">
-  Generado: {{ now()->format('d/m/Y H:i') }} | GRS — General Rigs Services
-  @if($cable->activo) | Cable ACTIVO @else | Cable ARCHIVADO @endif
+  GRS — General Rigs Services S.A. &nbsp;|&nbsp; Tel: (+571) 876-7422 &nbsp;|&nbsp;
+  operaciones@grssa.com &nbsp;|&nbsp; www.grssa.com &nbsp;|&nbsp;
+  Generado: {{ now()->format('d/m/Y H:i') }}
+  @if($cable->activo) &nbsp;|&nbsp; Cable ACTIVO @else &nbsp;|&nbsp; Cable ARCHIVADO @endif
 </p>
 </body>
 </html>

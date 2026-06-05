@@ -31,7 +31,7 @@
 <body>
 <div class="wrapper">
   <div class="header">
-    <h1>GRS — Pump Tracker</h1>
+    <h1>GRS — General Rigs Services S.A.</h1>
     <p>Reporte de Alertas — {{ $rigName }} — {{ now()->format('d/m/Y H:i') }}</p>
   </div>
 
@@ -108,8 +108,11 @@
   </div>
 
   <div class="footer">
-    GRS — General Rigs Services | Pump Tracker | {{ now()->format('d/m/Y H:i') }}<br>
-    Este correo fue generado automáticamente. No responder a este mensaje.
+    <strong>GRS — General Rigs Services S.A.</strong><br>
+    Tel: (+571) 876-7422 &nbsp;|&nbsp;
+    <a href="mailto:operaciones@grssa.com" style="color:#6b7280;">operaciones@grssa.com</a> &nbsp;|&nbsp;
+    <a href="https://www.grssa.com" style="color:#6b7280;">www.grssa.com</a><br>
+    <span style="color:#9ca3af;">Pump Tracker — {{ now()->format('d/m/Y H:i') }} — Mensaje automático, no responder.</span>
   </div>
 </div>
 </body>

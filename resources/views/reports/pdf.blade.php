@@ -103,7 +103,9 @@
 </table>
 
 <p style="font-size:7px;color:#666;margin-top:8px;text-align:right">
-  Generado: {{ now()->format('d/m/Y H:i') }} | {{ $year }}-{{ $month }}
+  GRS — General Rigs Services S.A. &nbsp;|&nbsp; Tel: (+571) 876-7422 &nbsp;|&nbsp;
+  operaciones@grssa.com &nbsp;|&nbsp; www.grssa.com &nbsp;|&nbsp;
+  Generado: {{ now()->format('d/m/Y H:i') }} &nbsp;|&nbsp; Período: {{ $year }}-{{ $month }}
 </p>
 </body>
 </html>
