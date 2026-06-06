@@ -1,0 +1,89 @@
+# ── Render Blueprint — Pump Tracker GRS ─────────────────────────────────────
+# En Render: New > Blueprint > conectar este repo > seleccionar este archivo.
+# Las variables marcadas "sync: false" se completan a mano en el Dashboard
+# (valores secretos: APP_KEY, credenciales de Aiven, SMTP, etc.)
+
+services:
+  # ── App web (Nginx + PHP-FPM vía Dockerfile) ──────────────────────────────
+  - type: web
+    name: pump-tracker
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: "Pump Tracker GRS"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_LOCALE
+        value: es
+      - key: APP_KEY
+        sync: false          # !!! generar con: php artisan key:generate --show
+      - key: APP_URL
+        sync: false          # !!! https://pump-tracker.onrender.com o tu dominio
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false          # !!! host del servicio MySQL en Aiven
+      - key: DB_PORT
+        sync: false          # !!! puerto de Aiven (no es el 3306 estándar)
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: MYSQL_ATTR_SSL_CA
+        value: /var/www/html/storage/aiven-ca.pem   # !!! ver instrucciones abajo
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_ENCRYPTION
+        value: tls
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: "GRS Pump Tracker"
+      - key: LOG_CHANNEL
+        value: stderr
+
+  # ── Worker de colas (envío de correos en segundo plano) ───────────────────
+  - type: worker
+    name: pump-tracker-worker
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerCommand: php artisan queue:work database --sleep=3 --tries=3 --max-time=3600
+    plan: starter
+    envVars:
+      - fromService:
+          name: pump-tracker
+          type: web
+          envVarKey: APP_KEY
+        type: web
+      # El resto de variables se heredan vía "Environment Group" en el
+      # Dashboard de Render (recomendado) — ver instrucciones de despliegue.
+
+  # ── Scheduler — equivalente al cron `* * * * * php artisan schedule:run` ──
+  - type: cron
+    name: pump-tracker-scheduler
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerCommand: php artisan schedule:run
+    schedule: "* * * * *"
+    plan: starter
