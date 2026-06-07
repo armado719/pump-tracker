@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # --- Etapa 3: imagen final -----------------------------------------------------
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 RUN apk add --no-cache nginx supervisor bash curl \
     libzip-dev libpng-dev oniguruma-dev libxml2-dev \
