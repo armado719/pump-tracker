@@ -7,6 +7,8 @@ FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --ignore-platform-reqs
+COPY . .
+RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # --- Etapa 2: build de assets (Vite) ------------------------------------------
 FROM node:20-alpine AS assets
@@ -29,8 +31,7 @@ COPY . .
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=assets /app/public/build ./public/build
 
-RUN composer dump-autoload --optimize --no-dev \
-    && cp .env.example .env \
+RUN cp .env.example .env \
     && php artisan key:generate --force \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
