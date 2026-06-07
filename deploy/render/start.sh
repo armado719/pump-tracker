@@ -9,6 +9,7 @@ sed -i "s/__PORT__/${PORT}/g" /etc/nginx/http.d/default.conf
 echo "==> Cacheando configuración de Laravel..."
 php artisan config:cache  || echo "WARN: config:cache falló, continuando sin caché de config"
 php artisan route:cache   || echo "WARN: route:cache falló, continuando sin caché de rutas"
+php artisan view:clear    2>/dev/null || true
 php artisan view:cache    || echo "WARN: view:cache falló, continuando sin caché de vistas"
 
 echo "==> Ejecutando migraciones..."
