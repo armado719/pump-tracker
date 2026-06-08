@@ -25,6 +25,19 @@ Route::get('/', fn() => redirect()->route('dashboard'));
 // Página offline (servida por service worker cuando no hay conexión)
 Route::get('/offline', fn() => response()->file(public_path('offline.html')));
 
+// Service Worker dinámico — versión cambia automáticamente en cada deploy
+Route::get('/sw.js', function () {
+    $manifest = public_path('build/manifest.json');
+    $version  = file_exists($manifest) ? filemtime($manifest) : time();
+    $src      = public_path('sw.src.js');
+    $content  = str_replace('__BUILD_TIME__', $version, file_get_contents($src));
+    return response($content, 200, [
+        'Content-Type'          => 'application/javascript; charset=utf-8',
+        'Service-Worker-Allowed'=> '/',
+        'Cache-Control'         => 'no-cache, no-store, must-revalidate',
+    ]);
+})->withoutMiddleware(['web', 'auth']);
+
 // ─── Rutas protegidas ────────────────────────────────────────────────────────
 Route::middleware(['auth'])->group(function () {
 

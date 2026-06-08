@@ -431,12 +431,5 @@ document.querySelectorAll('.auto-dismiss').forEach(el => {
     }, 4000);
 });
 </script>
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js').catch(() => {});
-    });
-}
-</script>
 </body>
 </html>
