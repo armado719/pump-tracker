@@ -10,96 +10,294 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0b1622">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            background: #071018;
+        }
+
+        /* ── Fondo con efecto Ken Burns (zoom lento) ── */
+        .bg-image {
+            position: fixed;
+            inset: 0;
+            background-image: url('/images/grs-bg-login.jpg');
+            background-size: cover;
+            background-position: center right;
+            animation: kenBurns 20s ease-in-out infinite alternate;
+            transform-origin: center;
+        }
+
+        @keyframes kenBurns {
+            0%   { transform: scale(1)    translate(0, 0); }
+            33%  { transform: scale(1.06) translate(-1%, 1%); }
+            66%  { transform: scale(1.04) translate(1%, -0.5%); }
+            100% { transform: scale(1.08) translate(-0.5%, 0.5%); }
+        }
+
+        /* ── Overlay gradiente: oscuro izquierda, transparente derecha ── */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                105deg,
+                rgba(5, 15, 10, 0.92) 0%,
+                rgba(7, 20, 14, 0.85) 35%,
+                rgba(10, 25, 18, 0.55) 60%,
+                rgba(0, 0, 0, 0.15) 100%
+            );
+        }
+
+        /* ── Partículas flotantes ── */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.15);
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.4; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* ── Contenedor principal ── */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* ── Card del formulario ── */
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(8, 20, 15, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            box-shadow:
+                0 0 0 1px rgba(74, 222, 128, 0.05),
+                0 25px 60px rgba(0, 0, 0, 0.6),
+                0 0 80px rgba(74, 222, 128, 0.05);
+            animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes slideIn {
+            0%   { opacity: 0; transform: translateX(-40px) scale(0.97); }
+            100% { opacity: 1; transform: translateX(0)    scale(1); }
+        }
+
+        /* ── Logo ── */
+        .logo-wrap {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeDown 0.7s 0.2s ease both;
+        }
+
+        .logo-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(74, 222, 128, 0.4);
+            box-shadow:
+                0 0 0 4px rgba(74, 222, 128, 0.08),
+                0 0 30px rgba(74, 222, 128, 0.2);
+            margin-bottom: 1rem;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(74,222,128,0.08), 0 0 30px rgba(74,222,128,0.2); }
+            50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.15), 0 0 50px rgba(74,222,128,0.35); }
+        }
+
+        @keyframes fadeDown {
+            0%   { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Línea decorativa ── */
+        .divider {
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4ade80, transparent);
+            margin: 0.75rem auto 0;
+            animation: expandLine 1s 0.5s ease both;
+        }
+
+        @keyframes expandLine {
+            0%   { width: 0; opacity: 0; }
+            100% { width: 50px; opacity: 1; }
+        }
+
+        /* ── Campos input ── */
+        .field { margin-bottom: 1.25rem; animation: fadeUp 0.5s ease both; }
+        .field:nth-child(1) { animation-delay: 0.3s; }
+        .field:nth-child(2) { animation-delay: 0.4s; }
+        .field:nth-child(3) { animation-delay: 0.5s; }
+        .field:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            0%   { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .field label {
+            display: block;
+            color: #6b9e82;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 0.6rem;
+            font-size: 0.95rem;
+            background: rgba(0, 20, 12, 0.6);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            color: #f0ede8;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+
+        .field input:focus {
+            border-color: rgba(74, 222, 128, 0.6);
+            background: rgba(0, 20, 12, 0.8);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1), 0 0 20px rgba(74, 222, 128, 0.05);
+        }
+
+        /* ── Botón submit ── */
+        .btn-login {
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #16a34a 0%, #4ade80 100%);
+            color: #071018;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: fadeUp 0.5s 0.65s ease both;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 40%;
+            height: 200%;
+            background: rgba(255,255,255,0.25);
+            transform: skewX(-20deg);
+            transition: left 0.5s ease;
+        }
+
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(74,222,128,0.35); }
+        .btn-login:hover::before { left: 140%; }
+        .btn-login:active { transform: translateY(0); }
+
+        /* ── Footer ── */
+        .card-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: rgba(74, 222, 128, 0.2);
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            animation: fadeUp 0.5s 0.8s ease both;
+        }
+
+        /* ── Línea animada inferior de la card ── */
+        .card-glow {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4ade80, transparent);
+            border-radius: 0 0 1.25rem 1.25rem;
+            animation: glowPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; }
+            50%       { opacity: 1; }
+        }
+    </style>
 </head>
-<body style="margin:0;padding:0;font-family:'Figtree',sans-serif;background:#0b1622;">
+<body>
 
-<div style="display:flex;min-height:100vh;">
+    {{-- Fondo con Ken Burns --}}
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
 
-    {{-- ── PANEL IZQUIERDO — Branding ────────────────────────────────── --}}
-    <div class="hidden lg:flex" style="flex:1;flex-direction:column;justify-content:center;align-items:center;
-         background:linear-gradient(160deg,#0b1f16 0%,#0b1622 50%,#071018 100%);
-         position:relative;overflow:hidden;padding:3rem;">
+    {{-- Partículas flotantes --}}
+    <div class="particles" id="particles"></div>
 
-        {{-- Círculos decorativos de fondo --}}
-        <div style="position:absolute;width:400px;height:400px;border-radius:50%;
-             border:1px solid rgba(74,222,128,0.08);top:-80px;left:-80px;"></div>
-        <div style="position:absolute;width:600px;height:600px;border-radius:50%;
-             border:1px solid rgba(74,222,128,0.05);top:-180px;left:-180px;"></div>
-        <div style="position:absolute;width:300px;height:300px;border-radius:50%;
-             border:1px solid rgba(6,182,212,0.08);bottom:-60px;right:-60px;"></div>
+    {{-- Contenido --}}
+    <div class="login-wrapper">
+        <div class="login-card">
 
-        {{-- Logo GRS --}}
-        <div style="position:relative;z-index:1;text-align:center;">
-            <img src="/images/grs-logo.png" alt="GRS"
-                 style="width:140px;height:140px;border-radius:50%;object-fit:cover;
-                        box-shadow:0 0 0 3px rgba(74,222,128,0.3),0 0 40px rgba(74,222,128,0.15);
-                        margin-bottom:2rem;">
-
-            <h1 style="color:#ffffff;font-size:2.5rem;font-weight:700;letter-spacing:0.15em;
-                        margin:0 0 0.5rem;">GRS</h1>
-            <p style="color:#4a8a9e;font-size:1rem;letter-spacing:0.05em;margin:0 0 3rem;">
-                General Rigs Services S.A.S.
-            </p>
-
-            {{-- Divisor --}}
-            <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#4ade80,transparent);
-                         margin:0 auto 3rem;"></div>
-
-            {{-- Descripción --}}
-            <p style="color:#6b9e82;font-size:1.05rem;max-width:340px;line-height:1.7;margin:0 auto 3rem;">
-                Sistema de seguimiento operacional de equipos de perforación, bombas y cable TM.
-            </p>
-
-            {{-- Stats decorativos --}}
-            <div style="display:flex;gap:2.5rem;justify-content:center;">
-                <div style="text-align:center;">
-                    <div style="color:#4ade80;font-size:1.75rem;font-weight:700;">24/7</div>
-                    <div style="color:#4a8a9e;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;">Monitoreo</div>
-                </div>
-                <div style="width:1px;background:rgba(74,222,128,0.15);"></div>
-                <div style="text-align:center;">
-                    <div style="color:#4ade80;font-size:1.75rem;font-weight:700;">100%</div>
-                    <div style="color:#4a8a9e;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;">Trazabilidad</div>
-                </div>
-                <div style="width:1px;background:rgba(74,222,128,0.15);"></div>
-                <div style="text-align:center;">
-                    <div style="color:#4ade80;font-size:1.75rem;font-weight:700;">TM</div>
-                    <div style="color:#4a8a9e;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;">Cable Track</div>
-                </div>
+            {{-- Logo --}}
+            <div class="logo-wrap">
+                <img src="/images/grs-logo.png" alt="GRS" class="logo-img">
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;letter-spacing:0.15em;">GRS</div>
+                <div style="color:#4a8a9e;font-size:0.8rem;letter-spacing:0.04em;">General Rigs Services S.A.S.</div>
+                <div class="divider"></div>
             </div>
-        </div>
-    </div>
 
-    {{-- ── PANEL DERECHO — Formulario ───────────────────────────────── --}}
-    <div style="width:100%;max-width:480px;display:flex;flex-direction:column;
-                justify-content:center;align-items:center;padding:2rem;
-                background:#0f1f2e;border-left:1px solid rgba(74,222,128,0.1);">
-
-        {{-- Logo mobile (solo visible en pantallas pequeñas) --}}
-        <div class="lg:hidden" style="text-align:center;margin-bottom:2rem;">
-            <img src="/images/grs-logo.png" alt="GRS"
-                 style="width:90px;height:90px;border-radius:50%;object-fit:cover;
-                        box-shadow:0 0 0 2px rgba(74,222,128,0.3);margin-bottom:1rem;">
-            <div style="color:#ffffff;font-size:1.5rem;font-weight:700;letter-spacing:0.1em;">GRS</div>
-            <div style="color:#4a8a9e;font-size:0.85rem;">General Rigs Services S.A.S.</div>
-        </div>
-
-        <div style="width:100%;max-width:380px;">
-            <h2 style="color:#ffffff;font-size:1.6rem;font-weight:700;margin:0 0 0.4rem;">
-                Bienvenido
-            </h2>
-            <p style="color:#4a8a9e;font-size:0.9rem;margin:0 0 2rem;">
-                Ingresa tus credenciales para continuar
-            </p>
-
+            {{-- Formulario --}}
             {{ $slot }}
 
-            <p style="color:#2a4a3a;font-size:0.75rem;text-align:center;margin-top:2.5rem;">
-                Pump Tracker GRS © {{ date('Y') }}
-            </p>
+            {{-- Footer --}}
+            <div class="card-footer">Pump Tracker GRS © {{ date('Y') }}</div>
         </div>
+
+        <div class="card-glow" style="position:absolute;bottom:0;left:0;right:0;max-width:420px;"></div>
     </div>
 
-</div>
+    <script>
+        // Generar partículas flotantes
+        (function() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 18; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 6 + 2;
+                p.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random() * 45}%;
+                    animation-duration:${Math.random() * 12 + 10}s;
+                    animation-delay:${Math.random() * 10}s;
+                    opacity:${Math.random() * 0.4 + 0.1};
+                `;
+                container.appendChild(p);
+            }
+        })();
+    </script>
+
 </body>
 </html>
