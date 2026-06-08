@@ -18,7 +18,7 @@
     <aside class="w-64 flex-shrink-0 text-white flex flex-col" style="width:256px;flex-shrink:0;display:flex;flex-direction:column;background-color:#0b1622;">
         {{-- Logo GRS --}}
         <div class="py-5 flex flex-col items-center text-center" style="padding:1.25rem 0;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid #1a3528;">
-            <img src="/images/grs-logo.svg" alt="GRS" style="width:80px;height:80px;border-radius:50%;margin-bottom:8px;flex-shrink:0;object-fit:cover;">
+            <img src="/images/grs-logo.png" alt="GRS" style="width:80px;height:80px;border-radius:50%;margin-bottom:8px;flex-shrink:0;object-fit:cover;">
             <span class="text-sm font-bold tracking-widest text-white" style="font-size:0.875rem;font-weight:700;color:#ffffff;letter-spacing:0.1em;">GRS</span>
             <span style="font-size:0.7rem;color:#6b9e82;">General Rigs Services S.A.S.</span>
         </div>
