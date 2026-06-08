@@ -1,6 +1,6 @@
 # ── Pump Tracker GRS — imagen Docker para Render ────────────────────────────
-# Multi-stage: compila assets y dependencias, luego corre PHP-FPM + Nginx
-# vía supervisord, escuchando en $PORT (Render lo inyecta en runtime).
+# PHP-FPM + Nginx vía supervisord, escuchando en $PORT (Render lo inyecta).
+# Los assets de Vite se incluyen pre-compilados desde el repositorio.
 
 # --- Etapa 1: dependencias PHP -----------------------------------------------
 FROM composer:2 AS vendor
@@ -10,15 +10,7 @@ RUN composer install --no-dev --no-scripts --no-autoloader --ignore-platform-req
 COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
-# --- Etapa 2: build de assets (Vite) ------------------------------------------
-FROM node:20-alpine AS assets
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-# --- Etapa 3: imagen final -----------------------------------------------------
+# --- Etapa 2: imagen final -----------------------------------------------------
 FROM php:8.4-fpm-alpine
 
 RUN apk add --no-cache nginx supervisor bash curl \
@@ -29,7 +21,6 @@ WORKDIR /var/www/html
 
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
-COPY --from=assets /app/public/build ./public/build
 
 RUN cp .env.example .env \
     && chown -R www-data:www-data storage bootstrap/cache \
