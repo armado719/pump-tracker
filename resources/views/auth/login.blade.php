@@ -1,54 +1,83 @@
 <x-guest-layout>
-    <!-- Session Status (info/success) -->
+
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <!-- Error mensaje (ej: cuenta inactiva) -->
     @if(session('error'))
-    <div class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 font-medium">
+    <div style="margin-bottom:1rem;padding:0.75rem 1rem;border-radius:0.5rem;
+                background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+                color:#fca5a5;font-size:0.875rem;">
         {{ session('error') }}
     </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" style="display:flex;flex-direction:column;gap:1.25rem;">
         @csrf
 
-        <!-- Email Address -->
+        {{-- Email --}}
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <label for="email" style="display:block;color:#6b9e82;font-size:0.8rem;
+                   font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.5rem;">
+                Correo electrónico
+            </label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}"
+                   required autofocus autocomplete="username"
+                   style="width:100%;padding:0.75rem 1rem;border-radius:0.5rem;font-size:0.95rem;
+                          background:#0b1622;border:1px solid rgba(74,222,128,0.2);
+                          color:#f0ede8;outline:none;box-sizing:border-box;
+                          transition:border-color 0.2s;"
+                   onfocus="this.style.borderColor='rgba(74,222,128,0.6)'"
+                   onblur="this.style.borderColor='rgba(74,222,128,0.2)'"
+                   placeholder="usuario@grs.com">
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
+        {{-- Password --}}
+        <div>
+            <label for="password" style="display:block;color:#6b9e82;font-size:0.8rem;
+                   font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.5rem;">
+                Contraseña
+            </label>
+            <input id="password" type="password" name="password"
+                   required autocomplete="current-password"
+                   style="width:100%;padding:0.75rem 1rem;border-radius:0.5rem;font-size:0.95rem;
+                          background:#0b1622;border:1px solid rgba(74,222,128,0.2);
+                          color:#f0ede8;outline:none;box-sizing:border-box;
+                          transition:border-color 0.2s;"
+                   onfocus="this.style.borderColor='rgba(74,222,128,0.6)'"
+                   onblur="this.style.borderColor='rgba(74,222,128,0.2)'"
+                   placeholder="••••••••">
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        {{-- Remember + Forgot --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                <input id="remember_me" type="checkbox" name="remember"
+                       style="width:16px;height:16px;accent-color:#4ade80;cursor:pointer;">
+                <span style="color:#4a8a9e;font-size:0.85rem;">Recordarme</span>
             </label>
-        </div>
 
-        <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a href="{{ route('password.request') }}"
+                   style="color:#4a8a9e;font-size:0.85rem;text-decoration:none;"
+                   onmouseover="this.style.color='#4ade80'"
+                   onmouseout="this.style.color='#4a8a9e'">
+                    ¿Olvidaste tu contraseña?
                 </a>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
         </div>
+
+        {{-- Botón --}}
+        <button type="submit"
+                style="width:100%;padding:0.85rem;border-radius:0.5rem;border:none;cursor:pointer;
+                       background:linear-gradient(135deg,#16a34a,#4ade80);
+                       color:#0b1622;font-size:1rem;font-weight:700;letter-spacing:0.05em;
+                       transition:opacity 0.2s,transform 0.1s;"
+                onmouseover="this.style.opacity='0.9';this.style.transform='translateY(-1px)'"
+                onmouseout="this.style.opacity='1';this.style.transform='translateY(0)'">
+            Iniciar sesión
+        </button>
+
     </form>
+
 </x-guest-layout>
