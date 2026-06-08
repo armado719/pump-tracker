@@ -10,38 +10,31 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
     <style>
-        #sidebar {
-            transition: transform 0.3s ease;
+        /* Desktop: sidebar visible como columna fija */
+        @media (min-width: 768px) {
+            #sidebar {
+                display: flex !important;
+                position: relative !important;
+                transform: none !important;
+                width: 256px !important;
+                flex-shrink: 0 !important;
+            }
+            #hamburger     { display: none   !important; }
+            #sidebar-overlay { display: none !important; }
         }
+        /* Móvil: sidebar oculto, se muestra como overlay al abrir */
         @media (max-width: 767px) {
             #sidebar {
+                display: none;
                 position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
+                top: 0; left: 0;
                 height: 100vh !important;
                 width: 256px !important;
                 z-index: 50 !important;
-                transform: translateX(-100%) !important;
             }
-            #sidebar.open {
-                transform: translateX(0) !important;
-            }
-            #sidebar-overlay {
-                display: block !important;
-            }
-            #sidebar-overlay.hidden {
-                display: none !important;
-            }
-            #hamburger {
-                display: flex !important;
-            }
-            #main-wrapper {
-                width: 100% !important;
-            }
-        }
-        @media (min-width: 768px) {
-            #hamburger { display: none !important; }
-            #sidebar-overlay { display: none !important; }
+            #sidebar.open   { display: flex !important; }
+            #hamburger      { display: flex !important; }
+            #sidebar-overlay.visible { display: block !important; }
         }
     </style>
 </head>
@@ -54,7 +47,7 @@
     <div id="sidebar-overlay" class="hidden" onclick="closeSidebar()"
          style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:40;"></div>
 
-    <aside id="sidebar" class="w-64 flex-shrink-0 text-white flex flex-col" style="width:256px;flex-shrink:0;display:flex;flex-direction:column;background-color:#0b1622;">
+    <aside id="sidebar" class="w-64 flex-shrink-0 text-white flex flex-col" style="width:256px;flex-shrink:0;flex-direction:column;background-color:#0b1622;">
         {{-- Logo GRS --}}
         <div class="py-5 flex flex-col items-center text-center" style="padding:1.25rem 0;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid #1a3528;">
             <img src="/images/grs-logo.png" alt="GRS" style="width:80px;height:80px;border-radius:50%;margin-bottom:8px;flex-shrink:0;object-fit:cover;">
@@ -408,50 +401,17 @@
 @stack('scripts')
 <script>
 // ── Sidebar móvil ────────────────────────────────────────────────────────
-(function initSidebar() {
-    const sidebar  = document.getElementById('sidebar');
-    const overlay  = document.getElementById('sidebar-overlay');
-    const hamburger= document.getElementById('hamburger');
-
-    function applyMobile() {
-        if (window.innerWidth < 768) {
-            sidebar.style.position  = 'fixed';
-            sidebar.style.top       = '0';
-            sidebar.style.left      = '0';
-            sidebar.style.height    = '100vh';
-            sidebar.style.width     = '256px';
-            sidebar.style.zIndex    = '50';
-            if (!sidebar.classList.contains('open')) {
-                sidebar.style.transform = 'translateX(-100%)';
-            }
-            hamburger.style.display = 'flex';
-        } else {
-            sidebar.style.position  = '';
-            sidebar.style.transform = '';
-            sidebar.style.zIndex    = '';
-            hamburger.style.display = 'none';
-            overlay.classList.add('hidden');
-        }
-    }
-
-    window.openSidebar = function() {
-        sidebar.classList.add('open');
-        sidebar.style.transform = 'translateX(0)';
-        overlay.classList.remove('hidden');
-    };
-    window.closeSidebar = function() {
-        sidebar.classList.remove('open');
-        sidebar.style.transform = 'translateX(-100%)';
-        overlay.classList.add('hidden');
-    };
-
-    applyMobile();
-    window.addEventListener('resize', applyMobile);
-
-    sidebar.querySelectorAll('nav a').forEach(a => {
-        a.addEventListener('click', () => { if (window.innerWidth < 768) closeSidebar(); });
-    });
-})();
+window.openSidebar = function() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('visible');
+};
+window.closeSidebar = function() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('visible');
+};
+document.getElementById('sidebar').querySelectorAll('nav a').forEach(function(a) {
+    a.addEventListener('click', function() { if (window.innerWidth < 768) closeSidebar(); });
+});
 </script>
 <script>
 // ── Offline / Sync ───────────────────────────────────────────────────────
