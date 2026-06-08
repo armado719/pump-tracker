@@ -1,5 +1,5 @@
-const STATIC_CACHE  = 'pump-static-v2';
-const RUNTIME_CACHE = 'pump-runtime-v2';
+const STATIC_CACHE  = 'pump-static-v3';
+const RUNTIME_CACHE = 'pump-runtime-v3';
 
 const PRECACHE_URLS = ['/offline', '/dashboard', '/pumps', '/alerts'];
 
@@ -31,7 +31,9 @@ self.addEventListener('fetch', e => {
             caches.match(e.request).then(cached => {
                 if (cached) return cached;
                 return fetch(e.request).then(res => {
-                    caches.open(STATIC_CACHE).then(c => c.put(e.request, res.clone()));
+                    if (res.ok) {
+                        caches.open(STATIC_CACHE).then(c => c.put(e.request, res.clone()));
+                    }
                     return res;
                 });
             })
