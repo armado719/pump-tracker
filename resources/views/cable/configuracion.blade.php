@@ -21,11 +21,21 @@
                            style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">Diámetro Tambor (in)</label>
-                    <input type="number" name="diametro_tambor_in" step="0.1" required
-                           value="{{ old('diametro_tambor_in', $rig->diametro_tambor_in ?? 18) }}"
-                           class="w-full rounded-lg px-3 py-2 text-sm font-mono text-center"
-                           style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
+                    <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">Diámetro Tambor</label>
+                    <div class="flex gap-1">
+                        <input type="number" id="diametro_display" step="0.001" required
+                               value="{{ old('diametro_tambor_in', $rig->diametro_tambor_in ?? 18) }}"
+                               class="w-full rounded-lg px-3 py-2 text-sm font-mono text-center"
+                               style="background:#00111a;border:1px solid #003344;color:#F0EDE8;">
+                        <select id="diametro_unit" class="rounded-lg px-2 py-2 text-sm font-bold"
+                                style="background:#00111a;border:1px solid #003344;color:#06B6D4;min-width:52px;">
+                            <option value="in">in</option>
+                            <option value="cm">cm</option>
+                            <option value="ft">ft</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="diametro_tambor_in" id="diametro_tambor_in"
+                           value="{{ old('diametro_tambor_in', $rig->diametro_tambor_in ?? 18) }}">
                 </div>
                 <div>
                     <label class="block text-xs font-medium mb-1 uppercase" style="color:#4a8a9e;">N° Líneas Activas</label>
@@ -78,3 +88,37 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const display = document.getElementById('diametro_display');
+    const unitSel = document.getElementById('diametro_unit');
+    const hidden  = document.getElementById('diametro_tambor_in');
+
+    function r(v) { return Math.round(v * 1000) / 1000; }
+
+    function toInches(val, unit) {
+        if (unit === 'cm') return val / 2.54;
+        if (unit === 'ft') return val * 12;
+        return val;
+    }
+
+    function fromInches(inches, unit) {
+        if (unit === 'cm') return r(inches * 2.54);
+        if (unit === 'ft') return r(inches / 12);
+        return r(inches);
+    }
+
+    unitSel.addEventListener('change', function () {
+        const inches = parseFloat(hidden.value) || 0;
+        display.value = fromInches(inches, this.value);
+    });
+
+    display.addEventListener('input', function () {
+        const val = parseFloat(this.value) || 0;
+        hidden.value = r(toInches(val, unitSel.value));
+    });
+})();
+</script>
+@endpush
