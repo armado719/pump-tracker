@@ -33,7 +33,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Rigs — ver y listar para todos; crear/editar/borrar solo admin
     Route::get('/rigs',           [RigController::class, 'index'])->name('rigs.index');
-    Route::get('/rigs/{rig}',     [RigController::class, 'show'])->name('rigs.show');
     Route::middleware('admin')->group(function () {
         Route::get('/rigs/create',      [RigController::class, 'create'])->name('rigs.create');
         Route::post('/rigs',            [RigController::class, 'store'])->name('rigs.store');
@@ -42,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/rigs/{rig}',     [RigController::class, 'update']);
         Route::delete('/rigs/{rig}',    [RigController::class, 'destroy'])->name('rigs.destroy');
     });
+    Route::get('/rigs/{rig}',     [RigController::class, 'show'])->name('rigs.show');
 
     // Pozos — gestión centralizada + inline en rig (admin)
     Route::middleware('admin')->group(function () {
@@ -58,7 +58,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Bombas — ver para todos; crear/editar/borrar solo admin
     Route::get('/pumps',          [PumpController::class, 'index'])->name('pumps.index');
-    Route::get('/pumps/{pump}',   [PumpController::class, 'show'])->name('pumps.show');
     Route::middleware('admin')->group(function () {
         Route::get('/pumps/create',       [PumpController::class, 'create'])->name('pumps.create');
         Route::post('/pumps',             [PumpController::class, 'store'])->name('pumps.store');
@@ -67,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/pumps/{pump}',     [PumpController::class, 'update']);
         Route::delete('/pumps/{pump}',    [PumpController::class, 'destroy'])->name('pumps.destroy');
     });
+    Route::get('/pumps/{pump}',   [PumpController::class, 'show'])->name('pumps.show');
 
     // Personal de bomba — solo admin
     Route::middleware('admin')->group(function () {
