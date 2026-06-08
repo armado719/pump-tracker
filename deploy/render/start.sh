@@ -25,9 +25,11 @@ mkdir -p storage/framework/views \
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
-# Copiar certificado Aiven al path que espera Laravel
+# Copiar certificado Aiven y asegurar que sea legible por www-data (PHP-FPM)
 if [ -f /etc/secrets/aiven-ca.pem ]; then
+    chmod 644 /etc/secrets/aiven-ca.pem
     cp /etc/secrets/aiven-ca.pem /var/www/html/storage/aiven-ca.pem
+    chmod 644 /var/www/html/storage/aiven-ca.pem
 fi
 
 echo "==> Cacheando configuración de Laravel..."
