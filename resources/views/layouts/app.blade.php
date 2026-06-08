@@ -12,21 +12,18 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
-<div class="flex h-screen overflow-hidden">
+<div class="flex h-screen overflow-hidden" style="display:flex;height:100vh;overflow:hidden;">
 
     {{-- ── SIDEBAR ──────────────────────────────────────────────────── --}}
-    <aside class="w-64 flex-shrink-0 text-white flex flex-col" style="background-color:#0b1622;">
+    <aside class="w-64 flex-shrink-0 text-white flex flex-col" style="width:256px;flex-shrink:0;display:flex;flex-direction:column;background-color:#0b1622;">
         {{-- Logo GRS --}}
-        <div class="py-5 flex flex-col items-center text-center" style="border-bottom:1px solid #1a3528;">
-            <img src="/images/grs-logo.png" alt="GRS"
-                 style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px #1a6b4a;margin-bottom:8px;"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-            <div style="display:none;width:80px;height:80px;border-radius:50%;align-items:center;justify-content:center;font-size:1.75rem;font-weight:900;background-color:#1a3528;color:#4ade80;box-shadow:0 0 0 2px #1a6b4a;margin-bottom:8px;">G</div>
-            <span class="text-sm font-bold tracking-widest text-white">GRS</span>
+        <div class="py-5 flex flex-col items-center text-center" style="padding:1.25rem 0;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid #1a3528;">
+            <div style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:900;background-color:#1a3528;color:#4ade80;box-shadow:0 0 0 2px #1a6b4a;margin-bottom:8px;flex-shrink:0;">G</div>
+            <span class="text-sm font-bold tracking-widest text-white" style="font-size:0.875rem;font-weight:700;color:#ffffff;letter-spacing:0.1em;">GRS</span>
             <span style="font-size:0.7rem;color:#6b9e82;">General Rigs Services S.A.S.</span>
         </div>
 
-        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto" style="flex:1;padding:1rem;overflow-y:auto;">
             <a href="{{ route('dashboard') }}"
                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition"
                style="{{ request()->routeIs('dashboard') ? 'background-color:#0d4a35;color:#4ade80;' : 'color:#9ab8a8;' }}"
@@ -275,7 +272,7 @@
     </aside>
 
     {{-- ── MAIN AREA ────────────────────────────────────────────────── --}}
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col overflow-hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;">
 
         {{-- Topbar --}}
         <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between flex-shrink-0">
