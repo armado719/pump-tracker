@@ -2,7 +2,10 @@ const CACHE_VERSION  = '__BUILD_TIME__';
 const STATIC_CACHE   = 'pump-static-'  + CACHE_VERSION;
 const RUNTIME_CACHE  = 'pump-runtime-' + CACHE_VERSION;
 
-const PRECACHE_URLS = ['/offline', '/dashboard', '/pumps', '/alerts'];
+// Solo cachear la página offline — las rutas autenticadas NO se pre-cachean
+// porque al instalarse el SW el usuario puede no estar logueado y se guardaría
+// la página de login bajo la URL del dashboard/pumps/alerts (causa ERR_FAILED).
+const PRECACHE_URLS = ['/offline'];
 
 self.addEventListener('install', e => {
     e.waitUntil(
@@ -43,7 +46,7 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    // CDN externos (Chart.js, fonts) → Cache First
+    // CDN externos (fuentes, Chart.js) → Cache First
     if (url.hostname !== self.location.hostname) {
         e.respondWith(
             caches.match(e.request).then(cached => {
@@ -59,24 +62,22 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    // Páginas HTML → Network First, cache como fallback offline
+    // Páginas HTML → Network First, sin guardar en caché para evitar
+    // que respuestas de redirección (302 → login) se almacenen bajo rutas protegidas.
+    // Solo usamos el caché como fallback offline cuando la red no responde.
     if (e.request.headers.get('accept')?.includes('text/html')) {
         e.respondWith(
             fetch(e.request)
-                .then(res => {
-                    if (res.ok) {
-                        caches.open(RUNTIME_CACHE).then(c => c.put(e.request, res.clone()));
-                    }
-                    return res;
-                })
                 .catch(() =>
-                    caches.match(e.request).then(cached => cached || caches.match('/offline'))
+                    caches.match(e.request)
+                        .then(cached => cached || caches.match('/offline'))
+                        .then(res => res || new Response('Sin conexión', { status: 503 }))
                 )
         );
         return;
     }
 
-    // Resto → Network First con cache fallback
+    // Resto (API calls, imágenes, etc.) → Network First con cache fallback
     e.respondWith(
         fetch(e.request)
             .then(res => {
@@ -85,6 +86,8 @@ self.addEventListener('fetch', e => {
                 }
                 return res;
             })
-            .catch(() => caches.match(e.request))
+            .catch(() => caches.match(e.request)
+                .then(cached => cached || new Response('', { status: 503 }))
+            )
     );
 });
