@@ -25,9 +25,9 @@ mkdir -p storage/framework/views \
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
-# Copiar certificado Aiven y asegurar que sea legible por www-data (PHP-FPM)
+# Copiar certificado Aiven a storage/ con permisos legibles por www-data (PHP-FPM).
+# /etc/secrets/ es read-only en Render; trabajamos sobre la copia en storage/.
 if [ -f /etc/secrets/aiven-ca.pem ]; then
-    chmod 644 /etc/secrets/aiven-ca.pem
     cp /etc/secrets/aiven-ca.pem /var/www/html/storage/aiven-ca.pem
     chmod 644 /var/www/html/storage/aiven-ca.pem
 fi
