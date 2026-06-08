@@ -47,7 +47,7 @@
     <div id="sidebar-overlay" class="hidden" onclick="closeSidebar()"
          style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:40;"></div>
 
-    <aside id="sidebar" class="w-64 flex-shrink-0 text-white flex-col" style="width:256px;flex-shrink:0;flex-direction:column;background-color:#0b1622;">
+    <aside id="sidebar" class="w-64 flex-shrink-0 text-white flex-col" style="display:none;width:256px;flex-shrink:0;flex-direction:column;background-color:#0b1622;">
         {{-- Logo GRS --}}
         <div class="py-5 flex flex-col items-center text-center" style="padding:1.25rem 0;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid #1a3528;">
             <img src="/images/grs-logo.png" alt="GRS" style="width:80px;height:80px;border-radius:50%;margin-bottom:8px;flex-shrink:0;object-fit:cover;">
@@ -302,6 +302,8 @@
             </form>
         </div>
     </aside>
+
+    <script>if(window.innerWidth>=768){var s=document.getElementById('sidebar');s.style.display='flex';}</script>
 
     {{-- ── MAIN AREA ────────────────────────────────────────────────── --}}
     <div id="main-wrapper" class="flex-1 flex flex-col overflow-hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;">
