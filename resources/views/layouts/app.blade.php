@@ -9,13 +9,37 @@
     <meta name="theme-color" content="#0b1622">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
+    <style>
+        @media (max-width: 767px) {
+            #sidebar {
+                position: fixed !important;
+                top: 0; left: 0;
+                height: 100vh;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            #sidebar.open { transform: translateX(0); }
+            #sidebar-overlay { display: block !important; }
+            #sidebar-overlay.hidden { display: none !important; }
+            #hamburger { display: flex !important; }
+        }
+        @media (min-width: 768px) {
+            #hamburger { display: none !important; }
+            #sidebar-overlay { display: none !important; }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
 <div class="flex h-screen overflow-hidden" style="display:flex;height:100vh;overflow:hidden;">
 
     {{-- ── SIDEBAR ──────────────────────────────────────────────────── --}}
-    <aside class="w-64 flex-shrink-0 text-white flex flex-col" style="width:256px;flex-shrink:0;display:flex;flex-direction:column;background-color:#0b1622;">
+    {{-- Overlay oscuro al abrir sidebar en móvil --}}
+    <div id="sidebar-overlay" class="hidden" onclick="closeSidebar()"
+         style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:40;"></div>
+
+    <aside id="sidebar" class="w-64 flex-shrink-0 text-white flex flex-col" style="width:256px;flex-shrink:0;display:flex;flex-direction:column;background-color:#0b1622;">
         {{-- Logo GRS --}}
         <div class="py-5 flex flex-col items-center text-center" style="padding:1.25rem 0;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid #1a3528;">
             <img src="/images/grs-logo.png" alt="GRS" style="width:80px;height:80px;border-radius:50%;margin-bottom:8px;flex-shrink:0;object-fit:cover;">
@@ -275,9 +299,16 @@
     <div class="flex-1 flex flex-col overflow-hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;">
 
         {{-- Topbar --}}
-        <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between flex-shrink-0">
-            <h1 class="text-lg font-semibold text-gray-800">@yield('title', 'Dashboard')</h1>
-            <span class="text-sm text-gray-500">{{ now()->format('d/m/Y') }}</span>
+        <header class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0" style="gap:0.75rem;">
+            {{-- Botón hamburguesa (solo móvil) --}}
+            <button id="hamburger" onclick="openSidebar()"
+                    style="display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:0.5rem;border:none;cursor:pointer;background:#0b1622;flex-shrink:0;">
+                <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <h1 class="text-lg font-semibold text-gray-800" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@yield('title', 'Dashboard')</h1>
+            <span class="text-sm text-gray-500" style="flex-shrink:0;">{{ now()->format('d/m/Y') }}</span>
         </header>
 
         {{-- Flash messages --}}
@@ -360,6 +391,21 @@
 </div>
 
 @stack('scripts')
+<script>
+// ── Sidebar móvil ────────────────────────────────────────────────────────
+function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.remove('hidden');
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.add('hidden');
+}
+// Cerrar sidebar al tocar un enlace de navegación en móvil
+document.querySelectorAll('#sidebar nav a').forEach(a => {
+    a.addEventListener('click', () => { if (window.innerWidth < 768) closeSidebar(); });
+});
+</script>
 <script>
 // ── Offline / Sync ───────────────────────────────────────────────────────
 function updateOnlineStatus() {
