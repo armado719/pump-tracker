@@ -17,8 +17,8 @@ php artisan route:cache   || echo "WARN: route:cache falló, continuando sin cac
 php artisan view:clear    2>/dev/null || true
 php artisan view:cache    || echo "WARN: view:cache falló, continuando sin caché de vistas"
 
-echo "==> Ejecutando migraciones..."
-php artisan migrate --force
+echo "==> Ejecutando migraciones (fresh — limpia tablas parciales del deploy inicial)..."
+php artisan migrate:fresh --force
 
 echo "==> Iniciando Nginx + PHP-FPM en el puerto ${PORT}..."
 exec supervisord -c /etc/supervisor/conf.d/supervisord.conf
