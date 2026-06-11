@@ -2,9 +2,6 @@ const CACHE_VERSION  = '__BUILD_TIME__';
 const STATIC_CACHE   = 'pump-static-'  + CACHE_VERSION;
 const RUNTIME_CACHE  = 'pump-runtime-' + CACHE_VERSION;
 
-// Solo cachear la página offline — las rutas autenticadas NO se pre-cachean
-// porque al instalarse el SW el usuario puede no estar logueado y se guardaría
-// la página de login bajo la URL del dashboard/pumps/alerts (causa ERR_FAILED).
 const PRECACHE_URLS = ['/offline'];
 
 self.addEventListener('install', e => {
@@ -36,9 +33,8 @@ self.addEventListener('fetch', e => {
             caches.match(e.request).then(cached => {
                 if (cached) return cached;
                 return fetch(e.request).then(res => {
-                    if (res.ok) {
-                        caches.open(STATIC_CACHE).then(c => c.put(e.request, res.clone()));
-                    }
+                    const clone = res.clone();
+                    if (res.ok) caches.open(STATIC_CACHE).then(c => c.put(e.request, clone));
                     return res;
                 });
             })
@@ -52,9 +48,8 @@ self.addEventListener('fetch', e => {
             caches.match(e.request).then(cached => {
                 if (cached) return cached;
                 return fetch(e.request).then(res => {
-                    if (res.ok) {
-                        caches.open(RUNTIME_CACHE).then(c => c.put(e.request, res.clone()));
-                    }
+                    const clone = res.clone();
+                    if (res.ok) caches.open(RUNTIME_CACHE).then(c => c.put(e.request, clone));
                     return res;
                 }).catch(() => new Response('', { status: 408 }));
             })
@@ -62,9 +57,7 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    // Páginas HTML → Network First, sin guardar en caché para evitar
-    // que respuestas de redirección (302 → login) se almacenen bajo rutas protegidas.
-    // Solo usamos el caché como fallback offline cuando la red no responde.
+    // Páginas HTML → Network First sin caché (evita guardar redirects de login)
     if (e.request.headers.get('accept')?.includes('text/html')) {
         e.respondWith(
             fetch(e.request)
@@ -77,13 +70,12 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    // Resto (API calls, imágenes, etc.) → Network First con cache fallback
+    // Resto → Network First con cache fallback
     e.respondWith(
         fetch(e.request)
             .then(res => {
-                if (res.ok) {
-                    caches.open(RUNTIME_CACHE).then(c => c.put(e.request, res.clone()));
-                }
+                const clone = res.clone();
+                if (res.ok) caches.open(RUNTIME_CACHE).then(c => c.put(e.request, clone));
                 return res;
             })
             .catch(() => caches.match(e.request)

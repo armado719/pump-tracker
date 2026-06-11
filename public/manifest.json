@@ -1,13 +1,12 @@
 {
-  "name": "Pump Tracker",
+  "name": "Pump Tracker GRS",
   "short_name": "PumpTracker",
   "description": "Control de horas de bombas de lodo en rigs de perforación",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#1e40af",
-  "theme_color": "#1e40af",
+  "background_color": "#0b1622",
+  "theme_color": "#0b1622",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/images/grs-logo.png", "sizes": "any", "type": "image/png" }
   ]
 }
