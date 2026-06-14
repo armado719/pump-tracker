@@ -27,6 +27,18 @@ self.addEventListener('fetch', e => {
     if (e.request.method !== 'GET') return;
     const url = new URL(e.request.url);
 
+    // Navegación HTML (dashboard, login, etc.) → no interceptar, el navegador
+    // maneja los redirects de Laravel nativamente. Solo capturamos error de red.
+    if (e.request.mode === 'navigate') {
+        e.respondWith(
+            fetch(e.request).catch(() =>
+                caches.match('/offline')
+                    .then(res => res || new Response('Sin conexión', { status: 503 }))
+            )
+        );
+        return;
+    }
+
     // Assets Vite (CSS/JS con hash) → Cache First
     if (url.pathname.startsWith('/build/')) {
         e.respondWith(
@@ -57,20 +69,7 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    // Páginas HTML → Network First sin caché (evita guardar redirects de login)
-    if (e.request.headers.get('accept')?.includes('text/html')) {
-        e.respondWith(
-            fetch(e.request)
-                .catch(() =>
-                    caches.match(e.request)
-                        .then(cached => cached || caches.match('/offline'))
-                        .then(res => res || new Response('Sin conexión', { status: 503 }))
-                )
-        );
-        return;
-    }
-
-    // Resto → Network First con cache fallback
+    // Resto (imágenes, API, etc.) → Network First con cache fallback
     e.respondWith(
         fetch(e.request)
             .then(res => {
