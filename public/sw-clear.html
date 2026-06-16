@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Pump Tracker — Limpiando caché</title>
+    <style>
+        body { font-family: sans-serif; background: #0b1622; color: #fff;
+               display: flex; align-items: center; justify-content: center;
+               height: 100vh; margin: 0; flex-direction: column; gap: 1rem; }
+        .msg { font-size: 1.1rem; color: #4ade80; }
+        .sub { font-size: 0.85rem; color: #6b9e82; }
+    </style>
+</head>
+<body>
+    <div class="msg" id="msg">Limpiando caché del navegador...</div>
+    <div class="sub" id="sub">Espera un momento</div>
+    <script>
+    (async function () {
+        try {
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                for (const reg of regs) await reg.unregister();
+            }
+            const keys = await caches.keys();
+            for (const key of keys) await caches.delete(key);
+            document.getElementById('msg').textContent = '✓ Caché limpio';
+            document.getElementById('sub').textContent = 'Redirigiendo a la app...';
+        } catch (e) {
+            document.getElementById('sub').textContent = 'Redirigiendo...';
+        }
+        setTimeout(() => window.location.replace('/'), 1500);
+    })();
+    </script>
+</body>
+</html>
